@@ -1,0 +1,600 @@
+/* ==========================================================================
+   RESET & VARIABLES CYBERPUNK NOÉTIQUE
+   ========================================================================== */
+:root {
+  --primary: #00f0ff;
+  --primary-glow: rgba(0, 240, 255, 0.4);
+  --secondary: #ff0055;
+  --secondary-glow: rgba(255, 0, 85, 0.4);
+  --accent: #8a2be2;
+  
+  --bg-dark: #05070f;
+  --card-bg: rgba(15, 23, 42, 0.55);
+  --card-border: rgba(255, 255, 255, 0.08);
+  
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+
+  --font-title: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ==========================================================================
+   ARRIÈRE-PLAN & CANVAS
+   ========================================================================== */
+#bgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, rgba(5, 7, 15, 0.8) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   CONTENEUR PRINCIPAL
+   ========================================================================== */
+.app-container {
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem 1.5rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* ==========================================================================
+   HORLOGE & QUOTE
+   ========================================================================== */
+.header-widget {
+  text-align: center;
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.digital-clock {
+  font-family: var(--font-title);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-shadow: 0 0 10px var(--primary-glow);
+  letter-spacing: 2px;
+}
+
+.digital-date {
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.noetic-quote {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   TITRE GLITCH
+   ========================================================================== */
+.glitch-title {
+  font-family: var(--font-title);
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 8px;
+  position: relative;
+  color: var(--text-main);
+  text-shadow: 0 0 20px var(--primary-glow);
+  animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { text-shadow: 0 0 15px var(--primary-glow); }
+  100% { text-shadow: 0 0 30px var(--secondary-glow); }
+}
+
+/* ==========================================================================
+   BARRE DE RECHERCHE ULTRA-JOLIE
+   ========================================================================== */
+.search-section {
+  width: 100%;
+  max-width: 680px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 50px;
+  padding: 6px 12px 6px 8px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  transition: var(--transition);
+}
+
+.search-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 25px var(--primary-glow), inset 0 0 10px var(--primary-glow);
+  transform: scale(1.01);
+}
+
+/* Dropdown Moteur */
+.engine-selector {
+  position: relative;
+}
+
+.engine-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: var(--primary);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.engine-btn:hover {
+  background: var(--primary);
+  color: #000;
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.engine-dropdown {
+  position: absolute;
+  top: 55px;
+  left: 0;
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(20px);
+  border-radius: 15px;
+  width: 160px;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.engine-dropdown.show {
+  display: flex;
+}
+
+.engine-option {
+  padding: 10px 15px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.engine-option:hover, .engine-option.active {
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--primary);
+}
+
+/* Champ texte */
+#searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 12px 18px;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  font-family: var(--font-body);
+}
+
+#searchInput::placeholder {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.search-submit {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-submit:hover {
+  color: var(--primary);
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   FAVORIS (GRID ET CARTE)
+   ========================================================================== */
+.favorites-section {
+  width: 100%;
+}
+
+.fav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 5px;
+}
+
+.fav-header h2 {
+  font-size: 1rem;
+  font-family: var(--font-title);
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.fav-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.icon-btn:hover, .icon-btn.active {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 15px;
+}
+
+.fav-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text-main);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+  aspect-ratio: 1;
+}
+
+.fav-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--primary-glow);
+}
+
+.fav-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.fav-icon-wrapper img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.fav-icon-fallback {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.fav-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Bouton de suppression dédié (Très facile sur tel) */
+.delete-fav-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px var(--secondary-glow);
+  z-index: 5;
+}
+
+.editing .delete-fav-btn {
+  display: flex;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.editing .fav-card {
+  animation: shake 0.5s infinite alternate;
+}
+
+@keyframes shake {
+  0% { transform: rotate(-1deg); }
+  100% { transform: rotate(1deg); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   BOUTON FLOTTANT & MODALES
+   ========================================================================== */
+.floating-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: var(--transition);
+  font-size: 1.2rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 20px var(--primary-glow);
+  transform: rotate(90deg);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  background: rgba(10, 15, 25, 0.95);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 30px var(--primary-glow);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  transform: translateY(20px);
+  transition: var(--transition);
+}
+
+.modal.active .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-modal {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.close-modal:hover {
+  color: var(--secondary);
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-group label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.setting-group input, .setting-group select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 12px;
+  color: var(--text-main);
+  outline: none;
+  font-family: var(--font-body);
+  transition: var(--transition);
+}
+
+.setting-group input:focus, .setting-group select:focus {
+  border-color: var(--primary);
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  background: var(--primary);
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.action-btn:hover {
+  box-shadow: 0 0 15px var(--primary-glow);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   ADAPTATION MOBILE (TÉLÉPHONE)
+   ========================================================================== */
+@media (max-width: 600px) {
+  .app-container {
+    padding: 1rem;
+    gap: 1.8rem;
+  }
+  
+  .glitch-title {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+  }
+
+  .digital-clock {
+    font-size: 1.8rem;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .fav-card {
+    padding: 10px 5px;
+  }
+
+  .floating-btn {
+    bottom: 15px;
+    right: 15px;
+  }
+}
