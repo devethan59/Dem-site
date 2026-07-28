@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEXUS // Interface Noétique</title>
+  <title>NEXUS // Système Noétique Ultime</title>
   
   <!-- Font Awesome pour les icônes -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,11 +21,25 @@
   <!-- Conteneur Principal -->
   <main class="app-container">
     
-    <!-- Widget Horloge & Slogan -->
+    <!-- Widget Horloge, Météo & Ambiance Audio -->
     <header class="header-widget">
-      <div id="clock" class="digital-clock">00:00:00</div>
+      <div class="header-top-bar">
+        <div id="weatherWidget" class="weather-tag"><i class="fa-solid fa-cloud-moon"></i> 19°C — Néon Nocturne</div>
+        <button id="audioToggleBtn" class="audio-btn" title="Ambiance Sonore Noétique"><i class="fa-solid fa-headphones"></i> <span id="audioLabel">Off</span></button>
+      </div>
+
+      <div id="clock" class="digital-clock" title="Cliquer pour basculer en mode Pomodoro Timer">00:00:00</div>
+      <div id="timerDisplay" class="timer-display" style="display:none;">
+        <span id="timerTime">25:00</span>
+        <div class="timer-controls">
+          <i class="fa-solid fa-play" id="startTimer"></i>
+          <i class="fa-solid fa-rotate-left" id="resetTimer"></i>
+          <i class="fa-solid fa-xmark" id="closeTimer"></i>
+        </div>
+      </div>
+
       <div id="date" class="digital-date">Lundi 1 Janvier</div>
-      <div id="quote" class="noetic-quote">"L'esprit est le réseau ultime."</div>
+      <div id="quote" class="noetic-quote" title="Cliquer pour changer de citation">"L'esprit est le réseau ultime."</div>
     </header>
 
     <!-- Titre Cyberpunk -->
@@ -51,7 +65,7 @@
           </div>
         </div>
 
-        <input type="text" id="searchInput" name="q" placeholder="Explorez le réseau..." autofocus autocomplete="off">
+        <input type="text" id="searchInput" name="q" placeholder="Explorez le réseau... (Ctrl+K)" autofocus autocomplete="off">
         
         <button type="submit" class="search-submit">
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -59,10 +73,15 @@
       </form>
     </section>
 
-    <!-- Grille des Favoris -->
+    <!-- Grille des Favoris avec Onglets/Catégories -->
     <section class="favorites-section">
       <div class="fav-header">
-        <h2>Raccourcis Matrice</h2>
+        <div class="fav-categories">
+          <button class="cat-btn active" data-cat="all">Tous</button>
+          <button class="cat-btn" data-cat="dev">Dev</button>
+          <button class="cat-btn" data-cat="media">Médias</button>
+          <button class="cat-btn" data-cat="social">Loisirs</button>
+        </div>
         <div class="fav-controls">
           <button id="toggleEditFavs" class="icon-btn" title="Gérer les favoris"><i class="fa-solid fa-pen-to-square"></i></button>
           <button id="openAddFavModal" class="icon-btn" title="Ajouter un favori"><i class="fa-solid fa-plus"></i></button>
@@ -75,6 +94,19 @@
     </section>
 
   </main>
+
+  <!-- Panneau Latéral Cyber To-Do / Notes Rapides -->
+  <aside class="sidebar" id="sidebar">
+    <button id="toggleSidebarBtn" class="sidebar-trigger" title="Notes & Tâches"><i class="fa-solid fa-list-check"></i></button>
+    <div class="sidebar-content">
+      <h3><i class="fa-solid fa-terminal"></i> Matrice de Tâches</h3>
+      <div class="todo-input-group">
+        <input type="text" id="todoInput" placeholder="Nouvelle tâche...">
+        <button id="addTodoBtn"><i class="fa-solid fa-plus"></i></button>
+      </div>
+      <ul id="todoList" class="todo-list"></ul>
+    </div>
+  </aside>
 
   <!-- Bouton Paramètres Fixe -->
   <button id="openSettingsBtn" class="floating-btn" title="Paramètres d'interface">
@@ -115,6 +147,20 @@
           </select>
         </div>
 
+        <div class="setting-group">
+          <label>Type d'Ambiance Audio</label>
+          <select id="audioTypeSelect">
+            <option value="rain">Pluie Cyberpunk</option>
+            <option value="white">Bruit Blanc Alpha (Focus)</option>
+            <option value="drone">Synth Drone Interstellaire</option>
+          </select>
+        </div>
+
+        <div class="setting-group checkbox-group">
+          <label for="soundFxToggle">Effets Sonores d'Interface (UI SFX)</label>
+          <input type="checkbox" id="soundFxToggle" checked>
+        </div>
+
       </div>
       <div class="modal-footer">
         <button id="saveSettingsBtn" class="action-btn">Sauvegarder</button>
@@ -137,6 +183,14 @@
         <div class="setting-group">
           <label>Adresse URL</label>
           <input type="url" id="favUrlInput" placeholder="https://github.com">
+        </div>
+        <div class="setting-group">
+          <label>Catégorie</label>
+          <select id="favCategoryInput">
+            <option value="dev">Dev & Tech</option>
+            <option value="media">Médias</option>
+            <option value="social">Loisirs</option>
+          </select>
         </div>
       </div>
       <div class="modal-footer">
