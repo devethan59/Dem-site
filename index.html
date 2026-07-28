@@ -2,430 +2,149 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexus | Recherche Noétique</title>
-  <style>
-    /* VARIABLES - Facile à modifier pour le futur */
-    :root {
-      --primary-neon: #00f0ff; /* Cyan cyberpunk */
-      --secondary-neon: #ff003c; /* Rouge/Magenta cyberpunk */
-      --noetic-glow: #8a2be2; /* Violet éthéré/noétique */
-      --glass-bg: rgba(15, 23, 42, 0.4);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --text-main: #f8fafc;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      /* Fond par défaut (Dégradé Cyber/Noétique) */
-      background: linear-gradient(135deg, #09090e 0%, #170d2b 50%, #05141f 100%);
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      transition: background 0.5s ease;
-      overflow-x: hidden;
-    }
-
-    /* CONTENEUR PRINCIPAL */
-    .container {
-      width: 100%;
-      max-width: 800px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 10;
-    }
-
-    h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-bottom: 2rem;
-      text-align: center;
-      background: linear-gradient(90deg, var(--primary-neon), var(--noetic-glow));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
-    }
-
-    /* BARRE DE RECHERCHE ULTRA JOLI */
-    .search-wrapper {
-      width: 100%;
-      max-width: 650px;
-      position: relative;
-      margin-bottom: 3rem;
-    }
-
-    .search-form {
-      display: flex;
-      width: 100%;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 20px 30px;
-      font-size: 1.2rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 50px;
-      color: white;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      outline: none;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-
-    .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .search-input:focus {
-      border-color: var(--primary-neon);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.1);
-      transform: scale(1.02);
-    }
-
-    /* FAVORIS (GRID RESPONSIVE) */
-    .favorites-container {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 15px;
-      margin-bottom: 2rem;
-    }
-
-    .fav-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(8px);
-      border-radius: 15px;
-      padding: 15px;
-      text-align: center;
-      text-decoration: none;
-      color: white;
-      transition: all 0.3s ease;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      aspect-ratio: 1;
-    }
-
-    .fav-card:hover {
-      border-color: var(--noetic-glow);
-      box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
-      transform: translateY(-5px);
-    }
-
-    .fav-icon {
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-
-    .fav-title {
-      font-size: 0.9rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-    }
-
-    .delete-fav {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: rgba(255,0,60,0.2);
-      border: none;
-      color: var(--secondary-neon);
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      display: none;
-      font-size: 0.8rem;
-    }
-
-    .fav-card:hover .delete-fav {
-      display: block;
-    }
-
-    /* PANNEAU DE CONFIGURATION (AJOUTS / FOND) */
-    .settings-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      color: white;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
-      font-size: 1.5rem;
-      z-index: 100;
-    }
-
-    .settings-btn:hover {
-      border-color: var(--primary-neon);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-    }
-
-    .settings-panel {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: rgba(10, 15, 25, 0.85);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--primary-neon);
-      border-radius: 15px;
-      padding: 20px;
-      width: 300px;
-      display: none;
-      flex-direction: column;
-      gap: 15px;
-      z-index: 99;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-
-    .settings-panel.active {
-      display: flex;
-    }
-
-    .settings-panel h3 {
-      font-size: 1.1rem;
-      color: var(--primary-neon);
-      border-bottom: 1px solid var(--glass-border);
-      padding-bottom: 5px;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .input-group input, .input-group select {
-      padding: 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--glass-border);
-      color: white;
-      border-radius: 5px;
-      outline: none;
-    }
-
-    .input-group input:focus {
-      border-color: var(--noetic-glow);
-    }
-
-    .btn {
-      padding: 10px;
-      background: transparent;
-      border: 1px solid var(--primary-neon);
-      color: var(--primary-neon);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 0.8rem;
-    }
-
-    .btn:hover {
-      background: var(--primary-neon);
-      color: black;
-    }
-
-    /* RESPONSIVE (TEL / PC) */
-    @media (max-width: 600px) {
-      h1 { font-size: 2.2rem; }
-      .search-input { padding: 15px 20px; font-size: 1rem; }
-      .favorites-container { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-      .settings-panel { right: 50%; transform: translateX(50%); bottom: 80px; width: 90%; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NEXUS // Interface Noétique</title>
+  
+  <!-- Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts : Orbitron & Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
-    <h1>NEXUS</h1>
+  <!-- Canvas pour arrière-plan interactif de particules -->
+  <canvas id="bgCanvas"></canvas>
+  <div class="bg-overlay"></div>
 
-    <!-- Barre de Recherche -->
-    <div class="search-wrapper">
-      <form class="search-form" action="https://www.google.com/search" method="get">
-        <input class="search-input" type="text" name="q" placeholder="Entrez dans la matrice..." autofocus autocomplete="off">
-      </form>
-    </div>
-
-    <!-- Conteneur des Favoris -->
-    <div class="favorites-container" id="favoritesGrid">
-      <!-- Les favoris seront injectés ici par Javascript -->
-    </div>
-  </div>
-
-  <!-- Bouton Paramètres -->
-  <button class="settings-btn" id="toggleSettings">⚙</button>
-
-  <!-- Panneau de configuration (prévu pour être évolutif) -->
-  <div class="settings-panel" id="settingsPanel">
+  <!-- Conteneur Principal -->
+  <main class="app-container">
     
-    <!-- Section Favoris -->
-    <h3>Ajouter un Favori</h3>
-    <div class="input-group">
-      <input type="text" id="favName" placeholder="Nom du site (ex: YouTube)">
-      <input type="url" id="favUrl" placeholder="URL (ex: https://youtube.com)">
-    </div>
-    <button class="btn" onclick="addFavorite()">Ajouter le site</button>
+    <!-- Widget Horloge & Slogan -->
+    <header class="header-widget">
+      <div id="clock" class="digital-clock">00:00:00</div>
+      <div id="date" class="digital-date">Lundi 1 Janvier</div>
+      <div id="quote" class="noetic-quote">"L'esprit est le réseau ultime."</div>
+    </header>
 
-    <!-- Section Fond d'écran -->
-    <h3>Personnaliser le Fond</h3>
-    <div class="input-group">
-      <select id="bgType" onchange="toggleBgInput()">
-        <option value="gradient">Dégradé Noétique</option>
-        <option value="color">Couleur Unie</option>
-        <option value="image">Image (URL)</option>
-      </select>
-      <input type="text" id="bgValue" placeholder="URL de l'image ou Code hex (#000000)" style="display:none;">
+    <!-- Titre Cyberpunk -->
+    <section class="brand-section">
+      <h1 class="glitch-title" data-text="NEXUS">NEXUS</h1>
+    </section>
+
+    <!-- Barre de Recherche Hybride -->
+    <section class="search-section">
+      <form id="searchForm" class="search-box">
+        
+        <!-- Selecteur de moteur de recherche -->
+        <div class="engine-selector">
+          <button type="button" id="engineBtn" class="engine-btn" title="Changer de moteur">
+            <i class="fa-brands fa-google" id="engineIcon"></i>
+          </button>
+          <div class="engine-dropdown" id="engineDropdown">
+            <div class="engine-option active" data-engine="google" data-action="https://www.google.com/search" data-icon="fa-brands fa-google">Google</div>
+            <div class="engine-option" data-engine="duckduckgo" data-action="https://duckduckgo.com/" data-icon="fa-solid fa-duck">DuckDuckGo</div>
+            <div class="engine-option" data-engine="youtube" data-action="https://www.youtube.com/results" data-param="search_query" data-icon="fa-brands fa-youtube">YouTube</div>
+            <div class="engine-option" data-engine="wikipedia" data-action="https://fr.wikipedia.org/wiki/Special:Search" data-icon="fa-brands fa-wikipedia-w">Wikipedia</div>
+            <div class="engine-option" data-engine="github" data-action="https://github.com/search" data-icon="fa-brands fa-github">GitHub</div>
+          </div>
+        </div>
+
+        <input type="text" id="searchInput" name="q" placeholder="Explorez le réseau..." autofocus autocomplete="off">
+        
+        <button type="submit" class="search-submit">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+    </section>
+
+    <!-- Grille des Favoris -->
+    <section class="favorites-section">
+      <div class="fav-header">
+        <h2>Raccourcis Matrice</h2>
+        <div class="fav-controls">
+          <button id="toggleEditFavs" class="icon-btn" title="Gérer les favoris"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button id="openAddFavModal" class="icon-btn" title="Ajouter un favori"><i class="fa-solid fa-plus"></i></button>
+        </div>
+      </div>
+      
+      <div class="favorites-grid" id="favoritesGrid">
+        <!-- Les favoris seront injectés par le script JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bouton Paramètres Fixe -->
+  <button id="openSettingsBtn" class="floating-btn" title="Paramètres d'interface">
+    <i class="fa-solid fa-sliders"></i>
+  </button>
+
+  <!-- MODALE : PARAMÈTRES D'INTERFACE -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-gear"></i> Paramètres Nexus</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="setting-group">
+          <label>Mode de Fond d'Écran</label>
+          <select id="bgTypeSelect">
+            <option value="particles">Particules Noétiques (Dynamiques)</option>
+            <option value="gradient">Dégradé Neon Synthwave</option>
+            <option value="color">Couleur Unie Cyber</option>
+            <option value="image">Image Personnalisée (URL)</option>
+          </select>
+        </div>
+
+        <div class="setting-group" id="bgValueGroup" style="display: none;">
+          <label id="bgValueLabel">Valeur du fond</label>
+          <input type="text" id="bgValueInput" placeholder="Entrez la valeur...">
+        </div>
+
+        <div class="setting-group">
+          <label>Style de Néon Dominant</label>
+          <select id="neonColorSelect">
+            <option value="cyan">Cyan Éthéré (#00f0ff)</option>
+            <option value="magenta">Magenta Cyber (#ff0055)</option>
+            <option value="purple">Violet Noétique (#8a2be2)</option>
+            <option value="green">Vert Matrice (#00ff66)</option>
+          </select>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button id="saveSettingsBtn" class="action-btn">Sauvegarder</button>
+      </div>
     </div>
-    <button class="btn" onclick="applyBackground()">Appliquer le fond</button>
   </div>
 
-  <script>
-    /* ----- GESTION DE L'INTERFACE ----- */
-    const settingsBtn = document.getElementById('toggleSettings');
-    const settingsPanel = document.getElementById('settingsPanel');
+  <!-- MODALE : AJOUTER UN FAVORI -->
+  <div class="modal" id="addFavModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-bookmark"></i> Nouveau Raccourci</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-group">
+          <label>Nom du site</label>
+          <input type="text" id="favNameInput" placeholder="ex: GitHub">
+        </div>
+        <div class="setting-group">
+          <label>Adresse URL</label>
+          <input type="url" id="favUrlInput" placeholder="https://github.com">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveFavBtn" class="action-btn">Ajouter</button>
+      </div>
+    </div>
+  </div>
 
-    // Afficher/Cacher les paramètres
-    settingsBtn.addEventListener('click', () => {
-      settingsPanel.classList.toggle('active');
-    });
-
-    // Cacher les paramètres si on clique ailleurs
-    document.addEventListener('click', (e) => {
-      if(!settingsPanel.contains(e.target) && e.target !== settingsBtn) {
-        settingsPanel.classList.remove('active');
-      }
-    });
-
-    /* ----- GESTION DES FAVORIS ----- */
-    let favorites = JSON.parse(localStorage.getItem('nexus_favs')) || [
-      { name: 'Google', url: 'https://google.com' }, // Favori par défaut
-    ];
-
-    function renderFavorites() {
-      const grid = document.getElementById('favoritesGrid');
-      grid.innerHTML = ''; 
-
-      favorites.forEach((fav, index) => {
-        // Crée une fausse icône basée sur la première lettre
-        const letter = fav.name.charAt(0).toUpperCase();
-        
-        const card = document.createElement('a');
-        card.href = fav.url;
-        card.className = 'fav-card';
-        card.innerHTML = `
-          <button class="delete-fav" onclick="deleteFavorite(event, ${index})">✕</button>
-          <div class="fav-icon">${letter}</div>
-          <div class="fav-title">${fav.name}</div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function addFavorite() {
-      const nameInput = document.getElementById('favName');
-      const urlInput = document.getElementById('favUrl');
-
-      if(nameInput.value && urlInput.value) {
-        // S'assurer que l'URL commence par http/https
-        let url = urlInput.value;
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = 'https://' + url;
-        }
-
-        favorites.push({ name: nameInput.value, url: url });
-        localStorage.setItem('nexus_favs', JSON.stringify(favorites));
-        
-        nameInput.value = '';
-        urlInput.value = '';
-        renderFavorites();
-      }
-    }
-
-    function deleteFavorite(event, index) {
-      event.preventDefault(); // Empêche d'ouvrir le lien en supprimant
-      favorites.splice(index, 1);
-      localStorage.setItem('nexus_favs', JSON.stringify(favorites));
-      renderFavorites();
-    }
-
-    /* ----- GESTION DU FOND D'ÉCRAN ----- */
-    function toggleBgInput() {
-      const type = document.getElementById('bgType').value;
-      const input = document.getElementById('bgValue');
-      
-      if (type === 'gradient') {
-        input.style.display = 'none';
-      } else {
-        input.style.display = 'block';
-        input.placeholder = type === 'image' ? 'URL de l\'image (ex: https://...)' : 'Couleur hexadécimale (ex: #121212)';
-      }
-    }
-
-    function applyBackground() {
-      const type = document.getElementById('bgType').value;
-      const value = document.getElementById('bgValue').value;
-      let bgStyle = '';
-
-      if (type === 'gradient') {
-        bgStyle = 'linear-gradient(135deg, #09090e 0%, #170d2b 50%, #05141f 100%)';
-      } else if (type === 'color' && value) {
-        bgStyle = value;
-      } else if (type === 'image' && value) {
-        bgStyle = `url('${value}')`;
-      }
-
-      if (bgStyle) {
-        document.body.style.background = bgStyle;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
-        
-        // Sauvegarde dans le navigateur
-        localStorage.setItem('nexus_bg', bgStyle);
-      }
-    }
-
-    function loadSavedBackground() {
-      const savedBg = localStorage.getItem('nexus_bg');
-      if (savedBg) {
-        document.body.style.background = savedBg;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
-      }
-    }
-
-    // Initialisation au chargement de la page
-    renderFavorites();
-    loadSavedBackground();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
