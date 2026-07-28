@@ -1,39 +1,119 @@
 /* ==========================================================================
-   NEXUS CORE SYSTEM - JS ENGINE
+   NEXUS CORE SYSTEM ULTIME - JS ENGINE
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initClock();
+  initClockAndTimer();
+  initQuotes();
   initSearchEngine();
   initFavorites();
+  initSidebarAndTodos();
   initModals();
   initSettings();
   initParticles();
+  initAudioGenerator();
+  initKeyboardShortcuts();
 });
 
 /* ==========================================================================
-   1. HORLOGE ET DATES
+   1. HORLOGE, POMODORO TIMER ET MÉTÉO
    ========================================================================== */
-function initClock() {
+function initClockAndTimer() {
   const clockEl = document.getElementById('clock');
   const dateEl = document.getElementById('date');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const timerTime = document.getElementById('timerTime');
+  const startTimer = document.getElementById('startTimer');
+  const resetTimer = document.getElementById('resetTimer');
+  const closeTimer = document.getElementById('closeTimer');
 
   const optionsDate = { weekday: 'long', day: 'numeric', month: 'long' };
 
-  function update() {
+  function updateClock() {
     const now = new Date();
     clockEl.textContent = now.toLocaleTimeString('fr-FR');
-    
     let strDate = now.toLocaleDateString('fr-FR', optionsDate);
     dateEl.textContent = strDate.charAt(0).toUpperCase() + strDate.slice(1);
   }
 
-  update();
-  setInterval(update, 1000);
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Basculement Pomodoro
+  clockEl.addEventListener('click', () => {
+    playUiSound(600, 0.05);
+    clockEl.style.display = 'none';
+    timerDisplay.style.display = 'flex';
+  });
+
+  closeTimer.addEventListener('click', () => {
+    playUiSound(400, 0.05);
+    timerDisplay.style.display = 'none';
+    clockEl.style.display = 'block';
+  });
+
+  let timerInterval = null;
+  let timeLeft = 25 * 60;
+
+  function updateTimerText() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    timerTime.textContent = `${m}:${s}`;
+  }
+
+  startTimer.addEventListener('click', () => {
+    playUiSound(800, 0.05);
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      startTimer.className = 'fa-solid fa-play';
+    } else {
+      startTimer.className = 'fa-solid fa-pause';
+      timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          updateTimerText();
+        } else {
+          clearInterval(timerInterval);
+          playUiSound(1000, 0.3);
+          alert('Session Pomodoro Noétique terminée !');
+        }
+      }, 1000);
+    }
+  });
+
+  resetTimer.addEventListener('click', () => {
+    playUiSound(300, 0.05);
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timeLeft = 25 * 60;
+    startTimer.className = 'fa-solid fa-play';
+    updateTimerText();
+  });
 }
 
 /* ==========================================================================
-   2. RECHERCHE HYBRIDE & MOTEURS
+   2. CITATIONS DYNAMIQUES
+   ========================================================================== */
+const quotesList = [
+  '"L\'esprit est le réseau ultime."',
+  '"Au-delà du silicium, la conscience émerge."',
+  '"Les données sont les empreintes de la pensée."',
+  '"Ne cherche pas dans la matrice ce qui réside en toi."',
+  '"Dans l\'obscurité binaire, la pensée est lumière."'
+];
+
+function initQuotes() {
+  const quoteEl = document.getElementById('quote');
+  quoteEl.addEventListener('click', () => {
+    playUiSound(700, 0.03);
+    const randomQuote = quotesList[Math.floor(Math.random() * quotesList.length)];
+    quoteEl.textContent = randomQuote;
+  });
+}
+
+/* ==========================================================================
+   3. RECHERCHE HYBRIDE & MOTEURS
    ========================================================================== */
 function initSearchEngine() {
   const form = document.getElementById('searchForm');
@@ -46,64 +126,76 @@ function initSearchEngine() {
   let currentAction = 'https://www.google.com/search';
   let currentParam = 'q';
 
-  // Toggle Dropdown
   engineBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    playUiSound(500, 0.04);
     dropdown.classList.toggle('show');
   });
 
   document.addEventListener('click', () => dropdown.classList.remove('show'));
 
-  // Sélection du moteur
   options.forEach(opt => {
     opt.addEventListener('click', () => {
+      playUiSound(650, 0.04);
       options.forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
 
       currentAction = opt.dataset.action;
       currentParam = opt.dataset.param || 'q';
       
-      // Mise à jour de l'icône du bouton
       engineIcon.className = opt.dataset.icon;
       dropdown.classList.remove('show');
       input.focus();
     });
   });
 
-  // Soumission
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const query = input.value.trim();
     if (!query) return;
 
+    playUiSound(900, 0.08);
     const searchUrl = `${currentAction}?${currentParam}=${encodeURIComponent(query)}`;
     window.location.href = searchUrl;
   });
 }
 
 /* ==========================================================================
-   3. GESTION DES FAVORIS ET FAVICONS
+   4. FAVORIS & CATÉGORIES
    ========================================================================== */
 let defaultFavs = [
-  { name: 'Google', url: 'https://google.com' },
-  { name: 'YouTube', url: 'https://youtube.com' },
-  { name: 'GitHub', url: 'https://github.com' },
-  { name: 'Wikipedia', url: 'https://wikipedia.org' }
+  { name: 'Google', url: 'https://google.com', category: 'dev' },
+  { name: 'YouTube', url: 'https://youtube.com', category: 'media' },
+  { name: 'GitHub', url: 'https://github.com', category: 'dev' },
+  { name: 'Wikipedia', url: 'https://wikipedia.org', category: 'social' }
 ];
 
 let favorites = JSON.parse(localStorage.getItem('nexus_favs')) || defaultFavs;
 let isEditing = false;
+let currentCategory = 'all';
 
 function initFavorites() {
   const grid = document.getElementById('favoritesGrid');
   const toggleEditBtn = document.getElementById('toggleEditFavs');
+  const catBtns = document.querySelectorAll('.cat-btn');
 
   renderFavorites();
 
   toggleEditBtn.addEventListener('click', () => {
+    playUiSound(400, 0.05);
     isEditing = !isEditing;
     toggleEditBtn.classList.toggle('active', isEditing);
     grid.classList.toggle('editing', isEditing);
+  });
+
+  catBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      playUiSound(550, 0.03);
+      catBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.cat;
+      renderFavorites();
+    });
   });
 }
 
@@ -111,18 +203,21 @@ function renderFavorites() {
   const grid = document.getElementById('favoritesGrid');
   grid.innerHTML = '';
 
-  favorites.forEach((fav, index) => {
+  const filteredFavs = currentCategory === 'all' 
+    ? favorites 
+    : favorites.filter(f => f.category === currentCategory);
+
+  filteredFavs.forEach((fav, index) => {
     const card = document.createElement('a');
     card.href = fav.url;
     card.className = 'fav-card';
     
-    // Récupération automatique de la Favicon Google API
     const domain = new URL(fav.url).hostname;
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
     const firstLetter = fav.name.charAt(0).toUpperCase();
 
     card.innerHTML = `
-      <button class="delete-fav-btn" data-index="${index}"><i class="fa-solid fa-xmark"></i></button>
+      <button class="delete-fav-btn"><i class="fa-solid fa-xmark"></i></button>
       <div class="fav-icon-wrapper">
         <img src="${faviconUrl}" alt="${fav.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <span class="fav-icon-fallback" style="display:none;">${firstLetter}</span>
@@ -130,62 +225,134 @@ function renderFavorites() {
       <span class="fav-title">${fav.name}</span>
     `;
 
-    // Clic suppression
     const delBtn = card.querySelector('.delete-fav-btn');
     delBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      deleteFavorite(index);
+      playUiSound(250, 0.08);
+      deleteFavorite(fav);
     });
 
-    // Éviter l'ouverture si on est en mode édition
     card.addEventListener('click', (e) => {
       if (isEditing) e.preventDefault();
+      else playUiSound(750, 0.04);
     });
 
     grid.appendChild(card);
   });
 }
 
-function deleteFavorite(index) {
-  favorites.splice(index, 1);
+function deleteFavorite(favToDelete) {
+  favorites = favorites.filter(f => f !== favToDelete);
   localStorage.setItem('nexus_favs', JSON.stringify(favorites));
   renderFavorites();
 }
 
 /* ==========================================================================
-   4. MODALES ET INTERACTION
+   5. PANNEAU LATÉRAL & TO-DO LIST
+   ========================================================================== */
+let todos = JSON.parse(localStorage.getItem('nexus_todos')) || [];
+
+function initSidebarAndTodos() {
+  const sidebar = document.getElementById('sidebar');
+  const trigger = document.getElementById('toggleSidebarBtn');
+  const todoInput = document.getElementById('todoInput');
+  const addTodoBtn = document.getElementById('addTodoBtn');
+
+  trigger.addEventListener('click', () => {
+    playUiSound(500, 0.05);
+    sidebar.classList.toggle('active');
+  });
+
+  addTodoBtn.addEventListener('click', addTodo);
+  todoInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTodo();
+  });
+
+  renderTodos();
+}
+
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if (text) {
+    playUiSound(700, 0.04);
+    todos.push({ text, completed: false });
+    localStorage.setItem('nexus_todos', JSON.stringify(todos));
+    input.value = '';
+    renderTodos();
+  }
+}
+
+function renderTodos() {
+  const list = document.getElementById('todoList');
+  list.innerHTML = '';
+
+  todos.forEach((todo, idx) => {
+    const li = document.createElement('li');
+    li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+    li.innerHTML = `
+      <span>${todo.text}</span>
+      <i class="fa-solid fa-trash"></i>
+    `;
+
+    li.querySelector('span').addEventListener('click', () => {
+      playUiSound(600, 0.03);
+      todos[idx].completed = !todos[idx].completed;
+      localStorage.setItem('nexus_todos', JSON.stringify(todos));
+      renderTodos();
+    });
+
+    li.querySelector('i').addEventListener('click', () => {
+      playUiSound(300, 0.05);
+      todos.splice(idx, 1);
+      localStorage.setItem('nexus_todos', JSON.stringify(todos));
+      renderTodos();
+    });
+
+    list.appendChild(li);
+  });
+}
+
+/* ==========================================================================
+   6. MODALES ET RACCOURCIS CLAVIER
    ========================================================================== */
 function initModals() {
   const settingsModal = document.getElementById('settingsModal');
   const addFavModal = document.getElementById('addFavModal');
-  
   const openSettingsBtn = document.getElementById('openSettingsBtn');
   const openAddFavModal = document.getElementById('openAddFavModal');
-  
   const closeBtns = document.querySelectorAll('.close-modal');
 
-  openSettingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
-  openAddFavModal.addEventListener('click', () => addFavModal.classList.add('active'));
+  openSettingsBtn.addEventListener('click', () => {
+    playUiSound(500, 0.05);
+    settingsModal.classList.add('active');
+  });
+
+  openAddFavModal.addEventListener('click', () => {
+    playUiSound(500, 0.05);
+    addFavModal.classList.add('active');
+  });
 
   closeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
+      playUiSound(350, 0.05);
       settingsModal.classList.remove('active');
       addFavModal.classList.remove('active');
     });
   });
 
-  // Ajouter un favori
-  const saveFavBtn = document.getElementById('saveFavBtn');
-  saveFavBtn.addEventListener('click', () => {
+  document.getElementById('saveFavBtn').addEventListener('click', () => {
     const name = document.getElementById('favNameInput').value.trim();
     let url = document.getElementById('favUrlInput').value.trim();
+    const category = document.getElementById('favCategoryInput').value;
 
     if (name && url) {
+      playUiSound(800, 0.05);
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://' + url;
       }
-      favorites.push({ name, url });
+      favorites.push({ name, url, category });
       localStorage.setItem('nexus_favs', JSON.stringify(favorites));
       renderFavorites();
       
@@ -196,9 +363,41 @@ function initModals() {
   });
 }
 
+function initKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      document.getElementById('searchInput').focus();
+      playUiSound(850, 0.05);
+    }
+  });
+}
+
 /* ==========================================================================
-   5. PERSONNALISATION DES THÈMES & FONDS
+   7. PARAMÈTRES ET SFX
    ========================================================================== */
+function playUiSound(freq, duration) {
+  const enabled = document.getElementById('soundFxToggle')?.checked;
+  if (!enabled) return;
+
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+
 function initSettings() {
   const bgTypeSelect = document.getElementById('bgTypeSelect');
   const bgValueGroup = document.getElementById('bgValueGroup');
@@ -206,7 +405,6 @@ function initSettings() {
   const neonColorSelect = document.getElementById('neonColorSelect');
   const saveBtn = document.getElementById('saveSettingsBtn');
 
-  // Affichage conditionnel des champs de fond
   bgTypeSelect.addEventListener('change', () => {
     const val = bgTypeSelect.value;
     if (val === 'particles') {
@@ -217,7 +415,6 @@ function initSettings() {
     }
   });
 
-  // Chargement des paramètres sauvegardés
   const savedBgType = localStorage.getItem('nexus_bg_type') || 'particles';
   const savedBgVal = localStorage.getItem('nexus_bg_val') || '';
   const savedNeon = localStorage.getItem('nexus_neon') || 'cyan';
@@ -229,6 +426,7 @@ function initSettings() {
   applyTheme(savedBgType, savedBgVal, savedNeon);
 
   saveBtn.addEventListener('click', () => {
+    playUiSound(900, 0.06);
     const type = bgTypeSelect.value;
     const val = bgValueInput.value.trim();
     const neon = neonColorSelect.value;
@@ -245,7 +443,6 @@ function initSettings() {
 function applyTheme(type, val, neon) {
   const canvas = document.getElementById('bgCanvas');
   
-  // Gestion du fond Canvas vs Style
   if (type === 'particles') {
     canvas.style.display = 'block';
     document.body.style.background = 'var(--bg-dark)';
@@ -260,7 +457,6 @@ function applyTheme(type, val, neon) {
     }
   }
 
-  // Changement des couleurs de néons
   const colors = {
     cyan: { p: '#00f0ff', pg: 'rgba(0,240,255,0.4)' },
     magenta: { p: '#ff0055', pg: 'rgba(255,0,85,0.4)' },
@@ -274,7 +470,81 @@ function applyTheme(type, val, neon) {
 }
 
 /* ==========================================================================
-   6. ANIMATION CANVAS DE PARTICULES NOÉTIQUES
+   8. GÉNÉRATEUR AUDIO D'AMBIANCE (WEB AUDIO API)
+   ========================================================================== */
+let audioCtx = null;
+let noiseNode = null;
+let isAudioPlaying = false;
+
+function initAudioGenerator() {
+  const btn = document.getElementById('audioToggleBtn');
+  const label = document.getElementById('audioLabel');
+
+  btn.addEventListener('click', () => {
+    if (!isAudioPlaying) {
+      startAmbientAudio();
+      btn.classList.add('active');
+      label.textContent = 'On';
+      isAudioPlaying = true;
+    } else {
+      stopAmbientAudio();
+      btn.classList.remove('active');
+      label.textContent = 'Off';
+      isAudioPlaying = false;
+    }
+  });
+}
+
+function startAmbientAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const bufferSize = audioCtx.sampleRate * 2;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = Math.random() * 2 - 1;
+  }
+
+  noiseNode = audioCtx.createBufferSource();
+  noiseNode.buffer = buffer;
+  noiseNode.loop = true;
+
+  const filter = audioCtx.createBiquadFilter();
+  const type = document.getElementById('audioTypeSelect')?.value || 'rain';
+
+  if (type === 'rain') {
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+  } else if (type === 'white') {
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+  } else {
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(200, audioCtx.currentTime);
+  }
+
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+  noiseNode.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  noiseNode.start();
+}
+
+function stopAmbientAudio() {
+  if (noiseNode) {
+    noiseNode.stop();
+    noiseNode.disconnect();
+  }
+  if (audioCtx) {
+    audioCtx.close();
+  }
+}
+
+/* ==========================================================================
+   9. PARTICULES CANVAS NOÉTIQUES
    ========================================================================== */
 function initParticles() {
   const canvas = document.getElementById('bgCanvas');
@@ -289,7 +559,7 @@ function initParticles() {
   });
 
   const particles = [];
-  const count = 60;
+  const count = 55;
 
   for (let i = 0; i < count; i++) {
     particles.push({
