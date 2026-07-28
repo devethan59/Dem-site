@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus | Recherche Noétique</title>
+  <style>
+    /* VARIABLES - Facile à modifier pour le futur */
+    :root {
+      --primary-neon: #00f0ff; /* Cyan cyberpunk */
+      --secondary-neon: #ff003c; /* Rouge/Magenta cyberpunk */
+      --noetic-glow: #8a2be2; /* Violet éthéré/noétique */
+      --glass-bg: rgba(15, 23, 42, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      /* Fond par défaut (Dégradé Cyber/Noétique) */
+      background: linear-gradient(135deg, #09090e 0%, #170d2b 50%, #05141f 100%);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      transition: background 0.5s ease;
+      overflow-x: hidden;
+    }
+
+    /* CONTENEUR PRINCIPAL */
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      text-align: center;
+      background: linear-gradient(90deg, var(--primary-neon), var(--noetic-glow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
+    }
+
+    /* BARRE DE RECHERCHE ULTRA JOLI */
+    .search-wrapper {
+      width: 100%;
+      max-width: 650px;
+      position: relative;
+      margin-bottom: 3rem;
+    }
+
+    .search-form {
+      display: flex;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 20px 30px;
+      font-size: 1.2rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      color: white;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      outline: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-neon);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.1);
+      transform: scale(1.02);
+    }
+
+    /* FAVORIS (GRID RESPONSIVE) */
+    .favorites-container {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-bottom: 2rem;
+    }
+
+    .fav-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(8px);
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+    }
+
+    .fav-card:hover {
+      border-color: var(--noetic-glow);
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .fav-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .fav-title {
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .delete-fav {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(255,0,60,0.2);
+      border: none;
+      color: var(--secondary-neon);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      display: none;
+      font-size: 0.8rem;
+    }
+
+    .fav-card:hover .delete-fav {
+      display: block;
+    }
+
+    /* PANNEAU DE CONFIGURATION (AJOUTS / FOND) */
+    .settings-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+      font-size: 1.5rem;
+      z-index: 100;
+    }
+
+    .settings-btn:hover {
+      border-color: var(--primary-neon);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    }
+
+    .settings-panel {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: rgba(10, 15, 25, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--primary-neon);
+      border-radius: 15px;
+      padding: 20px;
+      width: 300px;
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 99;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .settings-panel.active {
+      display: flex;
+    }
+
+    .settings-panel h3 {
+      font-size: 1.1rem;
+      color: var(--primary-neon);
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 5px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .input-group input, .input-group select {
+      padding: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      color: white;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: var(--noetic-glow);
+    }
+
+    .btn {
+      padding: 10px;
+      background: transparent;
+      border: 1px solid var(--primary-neon);
+      color: var(--primary-neon);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+
+    .btn:hover {
+      background: var(--primary-neon);
+      color: black;
+    }
+
+    /* RESPONSIVE (TEL / PC) */
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      .search-input { padding: 15px 20px; font-size: 1rem; }
+      .favorites-container { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .settings-panel { right: 50%; transform: translateX(50%); bottom: 80px; width: 90%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>NEXUS</h1>
+
+    <!-- Barre de Recherche -->
+    <div class="search-wrapper">
+      <form class="search-form" action="https://www.google.com/search" method="get">
+        <input class="search-input" type="text" name="q" placeholder="Entrez dans la matrice..." autofocus autocomplete="off">
+      </form>
+    </div>
+
+    <!-- Conteneur des Favoris -->
+    <div class="favorites-container" id="favoritesGrid">
+      <!-- Les favoris seront injectés ici par Javascript -->
+    </div>
+  </div>
+
+  <!-- Bouton Paramètres -->
+  <button class="settings-btn" id="toggleSettings">⚙</button>
+
+  <!-- Panneau de configuration (prévu pour être évolutif) -->
+  <div class="settings-panel" id="settingsPanel">
+    
+    <!-- Section Favoris -->
+    <h3>Ajouter un Favori</h3>
+    <div class="input-group">
+      <input type="text" id="favName" placeholder="Nom du site (ex: YouTube)">
+      <input type="url" id="favUrl" placeholder="URL (ex: https://youtube.com)">
+    </div>
+    <button class="btn" onclick="addFavorite()">Ajouter le site</button>
+
+    <!-- Section Fond d'écran -->
+    <h3>Personnaliser le Fond</h3>
+    <div class="input-group">
+      <select id="bgType" onchange="toggleBgInput()">
+        <option value="gradient">Dégradé Noétique</option>
+        <option value="color">Couleur Unie</option>
+        <option value="image">Image (URL)</option>
+      </select>
+      <input type="text" id="bgValue" placeholder="URL de l'image ou Code hex (#000000)" style="display:none;">
+    </div>
+    <button class="btn" onclick="applyBackground()">Appliquer le fond</button>
+  </div>
+
+  <script>
+    /* ----- GESTION DE L'INTERFACE ----- */
+    const settingsBtn = document.getElementById('toggleSettings');
+    const settingsPanel = document.getElementById('settingsPanel');
+
+    // Afficher/Cacher les paramètres
+    settingsBtn.addEventListener('click', () => {
+      settingsPanel.classList.toggle('active');
+    });
+
+    // Cacher les paramètres si on clique ailleurs
+    document.addEventListener('click', (e) => {
+      if(!settingsPanel.contains(e.target) && e.target !== settingsBtn) {
+        settingsPanel.classList.remove('active');
+      }
+    });
+
+    /* ----- GESTION DES FAVORIS ----- */
+    let favorites = JSON.parse(localStorage.getItem('nexus_favs')) || [
+      { name: 'Google', url: 'https://google.com' }, // Favori par défaut
+    ];
+
+    function renderFavorites() {
+      const grid = document.getElementById('favoritesGrid');
+      grid.innerHTML = ''; 
+
+      favorites.forEach((fav, index) => {
+        // Crée une fausse icône basée sur la première lettre
+        const letter = fav.name.charAt(0).toUpperCase();
+        
+        const card = document.createElement('a');
+        card.href = fav.url;
+        card.className = 'fav-card';
+        card.innerHTML = `
+          <button class="delete-fav" onclick="deleteFavorite(event, ${index})">✕</button>
+          <div class="fav-icon">${letter}</div>
+          <div class="fav-title">${fav.name}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function addFavorite() {
+      const nameInput = document.getElementById('favName');
+      const urlInput = document.getElementById('favUrl');
+
+      if(nameInput.value && urlInput.value) {
+        // S'assurer que l'URL commence par http/https
+        let url = urlInput.value;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+
+        favorites.push({ name: nameInput.value, url: url });
+        localStorage.setItem('nexus_favs', JSON.stringify(favorites));
+        
+        nameInput.value = '';
+        urlInput.value = '';
+        renderFavorites();
+      }
+    }
+
+    function deleteFavorite(event, index) {
+      event.preventDefault(); // Empêche d'ouvrir le lien en supprimant
+      favorites.splice(index, 1);
+      localStorage.setItem('nexus_favs', JSON.stringify(favorites));
+      renderFavorites();
+    }
+
+    /* ----- GESTION DU FOND D'ÉCRAN ----- */
+    function toggleBgInput() {
+      const type = document.getElementById('bgType').value;
+      const input = document.getElementById('bgValue');
+      
+      if (type === 'gradient') {
+        input.style.display = 'none';
+      } else {
+        input.style.display = 'block';
+        input.placeholder = type === 'image' ? 'URL de l\'image (ex: https://...)' : 'Couleur hexadécimale (ex: #121212)';
+      }
+    }
+
+    function applyBackground() {
+      const type = document.getElementById('bgType').value;
+      const value = document.getElementById('bgValue').value;
+      let bgStyle = '';
+
+      if (type === 'gradient') {
+        bgStyle = 'linear-gradient(135deg, #09090e 0%, #170d2b 50%, #05141f 100%)';
+      } else if (type === 'color' && value) {
+        bgStyle = value;
+      } else if (type === 'image' && value) {
+        bgStyle = `url('${value}')`;
+      }
+
+      if (bgStyle) {
+        document.body.style.background = bgStyle;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+        
+        // Sauvegarde dans le navigateur
+        localStorage.setItem('nexus_bg', bgStyle);
+      }
+    }
+
+    function loadSavedBackground() {
+      const savedBg = localStorage.getItem('nexus_bg');
+      if (savedBg) {
+        document.body.style.background = savedBg;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+      }
+    }
+
+    // Initialisation au chargement de la page
+    renderFavorites();
+    loadSavedBackground();
+  </script>
+</body>
+</html>
