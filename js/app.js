@@ -4,9 +4,11 @@ import { initFavorites } from './favorites.js';
 import { initSidebarAndTodos } from './todos.js';
 import { initSettings, initParticles } from './theme.js';
 import { initAudioGenerator, playUiSound } from './audio.js';
+import { initWeather } from './weather.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initClockAndTimer();
+  initWeather();
   initSearchEngine();
   initFavorites();
   initSidebarAndTodos();
@@ -14,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initParticles();
   initAudioGenerator();
 
-  // Raccourci Clavier Ctrl + K / Cmd + K
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
@@ -23,4 +24,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
