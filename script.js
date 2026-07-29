@@ -1,5 +1,5 @@
 /* ==========================================================================
-   NEXUS CORE SYSTEM ULTIME - JS ENGINE
+   NEXUS CORE SYSTEM ULTIME - JS ENGINE (SOL 1 INTEGRATED)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,7 +39,6 @@ function initClockAndTimer() {
   updateClock();
   setInterval(updateClock, 1000);
 
-  // Basculement Pomodoro
   clockEl.addEventListener('click', () => {
     playUiSound(600, 0.05);
     clockEl.style.display = 'none';
@@ -113,7 +112,7 @@ function initQuotes() {
 }
 
 /* ==========================================================================
-   3. RECHERCHE HYBRIDE & MOTEURS
+   3. RECHERCHE HYBRIDE & OVERLAY HUB (SOLUTION 1)
    ========================================================================== */
 function initSearchEngine() {
   const form = document.getElementById('searchForm');
@@ -123,8 +122,18 @@ function initSearchEngine() {
   const dropdown = document.getElementById('engineDropdown');
   const options = document.querySelectorAll('.engine-option');
 
-  let currentAction = 'https://www.google.com/search';
-  let currentParam = 'q';
+  // Elements Overlay
+  const searchOverlay = document.getElementById('searchOverlay');
+  const searchIframe = document.getElementById('searchIframe');
+  const closeOverlayBtn = document.getElementById('closeSearchOverlay');
+  const expandFrameBtn = document.getElementById('expandFrameBtn');
+  const openExternalBtn = document.getElementById('openExternalBtn');
+  const searchFrameContainer = document.getElementById('searchFrameContainer');
+  const overlayTitle = document.getElementById('overlayTitle');
+
+  let currentUrlTemplate = 'https://html.duckduckgo.com/html/?q=';
+  let currentEngineKey = 'duckduckgo';
+  let lastFullUrl = '';
 
   engineBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -140,8 +149,8 @@ function initSearchEngine() {
       options.forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
 
-      currentAction = opt.dataset.action;
-      currentParam = opt.dataset.param || 'q';
+      currentUrlTemplate = opt.dataset.url;
+      currentEngineKey = opt.dataset.engine;
       
       engineIcon.className = opt.dataset.icon;
       dropdown.classList.remove('show');
@@ -155,8 +164,36 @@ function initSearchEngine() {
     if (!query) return;
 
     playUiSound(900, 0.08);
-    const searchUrl = `${currentAction}?${currentParam}=${encodeURIComponent(query)}`;
-    window.location.href = searchUrl;
+
+    if (currentEngineKey === 'google') {
+      // Si Google externe est choisi, ouverture d'un onglet direct
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+      return;
+    }
+
+    // Sinon ouverture dans l'overlay Solution 1 !
+    lastFullUrl = `${currentUrlTemplate}${encodeURIComponent(query)}`;
+    overlayTitle.textContent = `Recherche: ${query}`;
+    searchIframe.src = lastFullUrl;
+    searchOverlay.classList.add('active');
+  });
+
+  closeOverlayBtn.addEventListener('click', () => {
+    playUiSound(400, 0.05);
+    searchOverlay.classList.remove('active');
+    searchIframe.src = 'about:blank';
+  });
+
+  expandFrameBtn.addEventListener('click', () => {
+    playUiSound(600, 0.05);
+    searchFrameContainer.classList.toggle('expanded');
+  });
+
+  openExternalBtn.addEventListener('click', () => {
+    playUiSound(700, 0.05);
+    if (lastFullUrl) {
+      window.open(lastFullUrl, '_blank');
+    }
   });
 }
 
@@ -573,40 +610,4 @@ function initParticles() {
 
   function animate() {
     if (canvas.style.display === 'none') {
-      requestAnimationFrame(animate);
-      return;
-    }
-
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#00f0ff';
-    ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
-
-    for (let i = 0; i < count; i++) {
-      let p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-
-      if (p.x < 0 || p.x > width) p.vx *= -1;
-      if (p.y < 0 || p.y > height) p.vy *= -1;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      for (let j = i + 1; j < count; j++) {
-        let p2 = particles[j];
-        let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-        if (dist < 120) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
-        }
-      }
-    }
-
-    requestAnimationFrame(animate);
-  }
-
-  animate();
-}
+   
