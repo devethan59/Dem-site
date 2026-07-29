@@ -1,0 +1,112 @@
+/* Barre de Recherche */
+#searchForm {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#searchInput {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 14px 45px 14px 18px;
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+#searchInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* Grille et Cartes de Favoris */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.fav-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-main);
+  clip-path: var(--clip-card);
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.fav-card:hover {
+  border-color: var(--primary);
+  background: rgba(0, 240, 255, 0.08);
+  transform: translate(-3px, -3px);
+  box-shadow: 3px 3px 0px var(--primary);
+}
+
+.fav-icon-wrapper img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.fav-title {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Bouton de Suppression de Favori */
+.delete-fav-btn {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--secondary);
+  border: none;
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.favorites-grid.editing .delete-fav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Boutons Cyber Universels */
+.cyber-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 8px 14px;
+  border-radius: var(--card-radius);
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cyber-btn:hover, .cyber-btn.active {
+  background: var(--primary);
+  color: #000;
+  box-shadow: 0 0 12px var(--primary-glow);
+}
