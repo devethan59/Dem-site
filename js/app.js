@@ -5,51 +5,39 @@ import { initSidebarAndTodos } from './todos.js';
 import { initSettings, initParticles } from './theme.js';
 import { initAudioGenerator, playUiSound } from './audio.js';
 import { initWeather } from './weather.js';
-import { initRss } from './rss.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialisation des composants graphiques et système
-  initSettings();
-  initParticles();
-  initAudioGenerator();
+  // Exécution sécurisée de chaque module
+  const runModule = (name, fn) => {
+    try {
+      if (typeof fn === 'function') fn();
+    } catch (err) {
+      console.error(`Erreur module [${name}]:`, err);
+    }
+  };
 
-  // 2. Initialisation des modules applicatifs
-  initClockAndTimer();
-  initWeather();
-  initSearchEngine();
-  initFavorites();
-  initSidebarAndTodos();
-  initRss();
+  // Initialisation ordonnée
+  runModule('Theme Settings', initSettings);
+  runModule('Particles', initParticles);
+  runModule('Audio', initAudioGenerator);
+  runModule('Clock & Timer', initClockAndTimer);
+  runModule('Weather', initWeather);
+  runModule('Search Engine', initSearchEngine);
+  runModule('Favorites', initFavorites);
+  runModule('Sidebar & Todos', initSidebarAndTodos);
 
-  // 3. Effets sonores globaux sur l'interface (survol & clic)
-  document.querySelectorAll('.cyber-btn, .color-dot, .radius-btn, .fav-card').forEach(element => {
-    element.addEventListener('mouseenter', () => {
-      playUiSound(400, 0.02); // Bip subtil au survol
-    });
-    element.addEventListener('click', () => {
-      playUiSound(600, 0.04); // Bip de validation au clic
+  // Effet sonore global au clic
+  document.querySelectorAll('.cyber-btn, .fav-card').forEach(el => {
+    el.addEventListener('click', () => {
+      if (typeof playUiSound === 'function') playUiSound(600, 0.04);
     });
   });
 
-  // 4. Raccourcis clavier globaux
+  // Raccourci Ctrl+K / Cmd+K pour la recherche
   document.addEventListener('keydown', (e) => {
-    // Ctrl + K ou Cmd + K : Focus direct sur la barre de recherche
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.focus();
-        playUiSound(850, 0.05);
-      }
-    }
-
-    // Touche Échap : Ferme toutes les modales ouvertes
-    if (e.key === 'Escape') {
-      const activeModals = document.querySelectorAll('.modal-overlay.active');
-      if (activeModals.length > 0) {
-        activeModals.forEach(modal => modal.classList.remove('active'));
-        playUiSound(300, 0.05);
-      }
+      document.getElementById('searchInput')?.focus();
     }
   });
 });
