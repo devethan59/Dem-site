@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEXUS // Système Noétique Ultime</title>
+  <title>NEXUS // Système Noétique & Hub de Recherche</title>
   
   <!-- Font Awesome pour les icônes -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -54,18 +54,17 @@
         <!-- Selecteur de moteur de recherche -->
         <div class="engine-selector">
           <button type="button" id="engineBtn" class="engine-btn" title="Changer de moteur">
-            <i class="fa-brands fa-google" id="engineIcon"></i>
+            <i class="fa-solid fa-duck" id="engineIcon"></i>
           </button>
           <div class="engine-dropdown" id="engineDropdown">
-            <div class="engine-option active" data-engine="google" data-action="https://www.google.com/search" data-icon="fa-brands fa-google">Google</div>
-            <div class="engine-option" data-engine="duckduckgo" data-action="https://duckduckgo.com/" data-icon="fa-solid fa-duck">DuckDuckGo</div>
-            <div class="engine-option" data-engine="youtube" data-action="https://www.youtube.com/results" data-param="search_query" data-icon="fa-brands fa-youtube">YouTube</div>
-            <div class="engine-option" data-engine="wikipedia" data-action="https://fr.wikipedia.org/wiki/Special:Search" data-icon="fa-brands fa-wikipedia-w">Wikipedia</div>
-            <div class="engine-option" data-engine="github" data-action="https://github.com/search" data-icon="fa-brands fa-github">GitHub</div>
+            <div class="engine-option active" data-engine="duckduckgo" data-url="https://html.duckduckgo.com/html/?q=" data-icon="fa-solid fa-duck">DuckDuckGo</div>
+            <div class="engine-option" data-engine="wikipedia" data-url="https://fr.m.wikipedia.org/w/index.php?search=" data-icon="fa-brands fa-wikipedia-w">Wikipedia</div>
+            <div class="engine-option" data-engine="bing" data-url="https://www.bing.com/search?q=" data-icon="fa-brands fa-microsoft">Bing</div>
+            <div class="engine-option" data-engine="google" data-url="https://www.google.com/search?q=" data-icon="fa-brands fa-google">Google External</div>
           </div>
         </div>
 
-        <input type="text" id="searchInput" name="q" placeholder="Explorez le réseau... (Ctrl+K)" autofocus autocomplete="off">
+        <input type="text" id="searchInput" name="q" placeholder="Explorez le réseau directement ici... (Ctrl+K)" autofocus autocomplete="off">
         
         <button type="submit" class="search-submit">
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -94,6 +93,23 @@
     </section>
 
   </main>
+
+  <!-- OVERLAY / MODALE DE RECHERCHE INTEGRÉE (SOLUTION 1) -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-frame-container" id="searchFrameContainer">
+      <div class="search-frame-header">
+        <div class="frame-title"><i class="fa-solid fa-network-wired"></i> <span id="overlayTitle">Résultats Matrice</span></div>
+        <div class="frame-actions">
+          <button id="openExternalBtn" title="Ouvrir dans un vrai nouvel onglet"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+          <button id="expandFrameBtn" title="Agrandir / Plein Écran"><i class="fa-solid fa-expand"></i></button>
+          <button id="closeSearchOverlay" title="Fermer la recherche"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="search-frame-body">
+        <iframe id="searchIframe" src="about:blank" frameborder="0"></iframe>
+      </div>
+    </div>
+  </div>
 
   <!-- Panneau Latéral Cyber To-Do / Notes Rapides -->
   <aside class="sidebar" id="sidebar">
