@@ -1,46 +1,63 @@
 import { playUiSound } from './audio.js';
 
 export function initSettings() {
+  const settingsModal = document.getElementById('settingsModal');
+  const openSettingsBtn = document.getElementById('openSettingsBtn');
+  const closeSettingsBtn = document.getElementById('closeSettingsBtn') || settingsModal?.querySelector('.fa-xmark')?.parentElement;
+  const saveBtn = document.getElementById('saveSettingsBtn') || settingsModal?.querySelector('button:not([class])');
+
   const bgTypeSelect = document.getElementById('bgTypeSelect');
-  const bgValueGroup = document.getElementById('bgValueGroup');
   const bgValueInput = document.getElementById('bgValueInput');
   const neonColorSelect = document.getElementById('neonColorSelect');
-  const saveBtn = document.getElementById('saveSettingsBtn');
-  const openSettingsBtn = document.getElementById('openSettingsBtn');
-  const settingsModal = document.getElementById('settingsModal');
+  const soundFxToggle = document.getElementById('soundFxToggle');
 
+  // Chargement des préférences au démarrage
+  const savedBgType = localStorage.getItem('nexus_bg_type') || 'particles';
+  const savedBgVal = localStorage.getItem('nexus_bg_val') || '';
+  const savedNeon = localStorage.getItem('nexus_neon') || 'cyan';
+  const savedSfx = localStorage.getItem('nexus_sfx') !== 'false';
+
+  if (bgTypeSelect) bgTypeSelect.value = savedBgType;
+  if (bgValueInput) bgValueInput.value = savedBgVal;
+  if (neonColorSelect) neonColorSelect.value = savedNeon;
+  if (soundFxToggle) soundFxToggle.checked = savedSfx;
+
+  applyTheme(savedBgType, savedBgVal, savedNeon);
+
+  // Ouverture modal
   openSettingsBtn?.addEventListener('click', () => {
     playUiSound(500, 0.05);
     settingsModal?.classList.add('active');
   });
 
-  bgTypeSelect?.addEventListener('change', () => {
-    const val = bgTypeSelect.value;
-    if (bgValueGroup) {
-      bgValueGroup.style.display = val === 'particles' ? 'none' : 'flex';
-      if (bgValueInput) bgValueInput.placeholder = val === 'image' ? "URL de l'image..." : "Code Couleur...";
-    }
+  // Fermeture par la croix (X)
+  const xBtn = settingsModal?.querySelector('.fa-xmark')?.parentElement || settingsModal?.querySelector('[class*="close"]');
+  const closeModal = () => {
+    playUiSound(400, 0.05);
+    settingsModal?.classList.remove('active');
+  };
+
+  xBtn?.addEventListener('click', closeModal);
+  closeSettingsBtn?.addEventListener('click', closeModal);
+
+  // Clic à l'extérieur pour fermer
+  settingsModal?.addEventListener('click', (e) => {
+    if (e.target === settingsModal) closeModal();
   });
 
-  const savedBgType = localStorage.getItem('nexus_bg_type') || 'particles';
-  const savedBgVal = localStorage.getItem('nexus_bg_val') || '';
-  const savedNeon = localStorage.getItem('nexus_neon') || 'cyan';
-
-  if (bgTypeSelect) bgTypeSelect.value = savedBgType;
-  if (bgValueInput) bgValueInput.value = savedBgVal;
-  if (neonColorSelect) neonColorSelect.value = savedNeon;
-  
-  applyTheme(savedBgType, savedBgVal, savedNeon);
-
+  // Bouton Sauvegarder
   saveBtn?.addEventListener('click', () => {
     playUiSound(900, 0.06);
-    const type = bgTypeSelect.value;
-    const val = bgValueInput.value.trim();
-    const neon = neonColorSelect.value;
+
+    const type = bgTypeSelect?.value || 'particles';
+    const val = bgValueInput?.value.trim() || '';
+    const neon = neonColorSelect?.value || 'cyan';
+    const sfx = soundFxToggle ? soundFxToggle.checked : true;
 
     localStorage.setItem('nexus_bg_type', type);
     localStorage.setItem('nexus_bg_val', val);
     localStorage.setItem('nexus_neon', neon);
+    localStorage.setItem('nexus_sfx', sfx.toString());
 
     applyTheme(type, val, neon);
     settingsModal?.classList.remove('active');
@@ -53,7 +70,7 @@ function applyTheme(type, val, neon) {
   if (canvas) {
     if (type === 'particles') {
       canvas.style.display = 'block';
-      document.body.style.background = 'var(--bg-dark)';
+      document.body.style.background = 'var(--bg-dark, #05070f)';
     } else {
       canvas.style.display = 'none';
       if (type === 'gradient') {
@@ -92,7 +109,7 @@ export function initParticles() {
   });
 
   const particles = [];
-  const count = 50;
+  const count = 45;
 
   for (let i = 0; i < count; i++) {
     particles.push({
@@ -111,7 +128,8 @@ export function initParticles() {
     }
 
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#00f0ff';
+    const pColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#00f0ff';
+    ctx.fillStyle = pColor;
     ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
 
     for (let i = 0; i < count; i++) {
