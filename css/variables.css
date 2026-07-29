@@ -1,19 +1,19 @@
 :root {
-  /* Dynamic Hue (Géré par theme.js : 185 = cyan, 340 = rose, 270 = violet, 140 = vert, 45 = orange) */
+  /* Teinte dynamique (Pilotée par js/theme.js : 185 = cyan, 340 = rose, etc.) */
   --primary-h: 185;
   --primary-s: 100%;
   --primary-l: 50%;
-  
-  /* Couleurs dérivées */
+
+  /* Couleurs dérivées dynamiques */
   --primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
-  --primary-glow: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.4);
+  --primary-glow: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.45);
   --secondary: #ff0055;
-  
-  /* Arrière-plans & Surface */
+
+  /* Arrière-plans & Cartes */
   --bg-dark: #030509;
   --card-bg: rgba(8, 14, 28, 0.65);
   --card-border: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.3);
-  
+
   /* Textes */
   --text-main: #e0e6ed;
   --text-muted: #7888a0;
@@ -21,13 +21,12 @@
   /* Formes et Effets */
   --card-radius: 8px;
   --scanline-opacity: 0.15;
-  --panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--primary-glow);
 
   /* Typographies */
   --font-main: 'Segoe UI', system-ui, sans-serif;
   --font-title: 'Orbitron', monospace, sans-serif;
 
-  /* Formes Découpées */
+  /* Découpes Asymétriques */
   --clip-panel: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   --clip-card: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
   --clip-btn: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
