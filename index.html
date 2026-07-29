@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 
-  <!-- Fichiers CSS découpés -->
+  <!-- Fichiers CSS -->
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -18,27 +18,27 @@
 </head>
 <body>
 
-  <!-- Background Canvas pour Particules -->
+  <!-- Canvas de fond -->
   <canvas id="bgCanvas"></canvas>
 
   <div class="app-container">
 
-    <!-- En-tête / Widget Météo & Horloge -->
+    <!-- Section 1 : Widget Météo & Horloge -->
     <header class="nexus-panel">
       <div id="weatherWidget" class="weather-container"></div>
     </header>
 
-    <!-- Moteur de recherche -->
+    <!-- Section 2 : Moteur de recherche -->
     <section class="nexus-panel">
-      <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Explorez le réseau..." autocomplete="off">
+      <form id="searchForm" style="position: relative; display: flex; align-items: center;">
+        <input type="text" id="searchInput" placeholder="Explorez le réseau..." autocomplete="off" style="width: 100%;">
         <button type="submit" class="cyber-btn" style="position: absolute; right: 8px;">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
     </section>
 
-    <!-- Favoris -->
+    <!-- Section 3 : Favoris -->
     <section class="nexus-panel">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; gap: 6px;" id="categoryFilters">
@@ -54,34 +54,23 @@
         </div>
       </div>
 
-      <!-- Grille Générée par JS -->
+      <!-- Grille de Favoris -->
       <div id="favoritesGrid" class="favorites-grid"></div>
     </section>
 
   </div>
 
-  <!-- Bouton Paramètres Flottant -->
+  <!-- Bouton Flottant des Paramètres -->
   <button id="openSettingsBtn" class="cyber-btn" style="position: fixed; bottom: 20px; right: 20px; border-radius: 50%; width: 45px; height: 45px; padding: 0; justify-content: center; z-index: 100;">
     <i class="fa-solid fa-gear" style="font-size: 1.2rem;"></i>
   </button>
-
-  <!-- MODAL : Recherche -->
-  <div id="searchOverlay" class="modal-overlay">
-    <div class="modal-container" style="max-width: 800px; height: 80vh;">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px;">
-        <span id="overlayTitle" style="font-family: var(--font-title); color: var(--primary);">Résultats</span>
-        <button id="closeSearchOverlay" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="search-frame-body" style="height: calc(100% - 40px);"></div>
-    </div>
-  </div>
 
   <!-- MODAL : Ajout de Favori -->
   <div id="addFavModal" class="modal-overlay">
     <div class="modal-container">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h4 style="font-family: var(--font-title); color: var(--primary);">NOUVEAU FAVORI</h4>
-        <button class="close-modal cyber-btn"><i class="fa-solid fa-xmark"></i></button>
+        <button id="closeAddFavBtn" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="favForm">
         <div class="settings-group">
@@ -100,7 +89,7 @@
             <option value="loisirs">Loisirs</option>
           </select>
         </div>
-        <button type="submit" id="saveFavBtn" class="cyber-btn" style="width: 100%; justify-content: center; margin-top: 10px;">Enregistrer</button>
+        <button type="submit" id="saveFavBtn" class="cyber-btn" style="width: 100%; justify-content: center; margin-top: 10px;">Ajouter</button>
       </form>
     </div>
   </div>
@@ -113,19 +102,17 @@
         <button id="closeSettingsBtn" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Choix de Couleur Néon via valeurs Hue (Teintes HSL) -->
       <div class="settings-group">
         <label class="settings-label">Couleur Néon Dominante</label>
         <div class="color-picker-grid">
-          <div class="color-dot" data-hue="185" style="background: #00f0ff;" title="Cyan"></div>
-          <div class="color-dot" data-hue="340" style="background: #ff0055;" title="Rose"></div>
-          <div class="color-dot" data-hue="270" style="background: #7000ff;" title="Violet"></div>
-          <div class="color-dot" data-hue="140" style="background: #00ff66;" title="Vert"></div>
-          <div class="color-dot" data-hue="45"  style="background: #ffb700;" title="Orange"></div>
+          <div class="color-dot" data-hue="185" style="background: #00f0ff;"></div>
+          <div class="color-dot" data-hue="340" style="background: #ff0055;"></div>
+          <div class="color-dot" data-hue="270" style="background: #7000ff;"></div>
+          <div class="color-dot" data-hue="140" style="background: #00ff66;"></div>
+          <div class="color-dot" data-hue="45"  style="background: #ffb700;"></div>
         </div>
       </div>
 
-      <!-- Mode de Fond d'écran -->
       <div class="settings-group">
         <label class="settings-label">Type de Fond d'Écran</label>
         <select id="bgTypeSelect" class="cyber-btn" style="width: 100%; background: #000;">
@@ -145,7 +132,6 @@
         <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-btn" style="width: 100%;">
       </div>
 
-      <!-- Géométrie des cartes -->
       <div class="settings-group">
         <label class="settings-label">Géométrie des Cartes</label>
         <div style="display: flex; gap: 8px;">
@@ -155,15 +141,9 @@
         </div>
       </div>
 
-      <!-- Options graphiques & sonores -->
       <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
         <span class="settings-label" style="margin: 0;">Lignes CRT (Scanlines)</span>
         <input type="checkbox" id="scanlinesToggle" checked style="accent-color: var(--primary);">
-      </div>
-
-      <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="settings-label" style="margin: 0;">Effets Sonores UI</span>
-        <input type="checkbox" id="sfxToggle" checked style="accent-color: var(--primary);">
       </div>
 
       <div style="margin-top: 20px; text-align: right;">
@@ -172,7 +152,7 @@
     </div>
   </div>
 
-  <!-- Point d'entrée Javascript ES Module -->
+  <!-- Point d'entrée JavaScript -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
