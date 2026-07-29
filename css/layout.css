@@ -7,20 +7,20 @@
   gap: 25px;
 }
 
-/* Animation Flottante */
+/* Animations de Flottaison & Pulsation */
 @keyframes cyberFloat {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-7px); }
   100% { transform: translateY(0px); }
 }
 
 @keyframes pulseGlow {
-  0% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 10px var(--primary-glow); }
-  50% { box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 22px var(--primary-glow); }
-  100% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 10px var(--primary-glow); }
+  0% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 12px var(--primary-glow); }
+  50% { box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 24px var(--primary-glow); }
+  100% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 12px var(--primary-glow); }
 }
 
-/* Panneaux Flottants avec Effet Verre & Neon */
+/* Panneaux Flottants avec Effet Verre */
 .nexus-panel, .weather-container {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -32,22 +32,22 @@
   clip-path: var(--clip-panel);
   position: relative;
   
-  /* Lévitation */
+  /* Application de la flottaison continue */
   animation: cyberFloat 6s ease-in-out infinite, pulseGlow 4s ease-in-out infinite;
-  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, background 0.3s ease;
 }
 
-/* Décalage temporel des animations pour un rendu organique */
+/* Décalage des animations pour chaque panneau (effet organique) */
 .app-container > .nexus-panel:nth-child(1) { animation-delay: 0s; }
 .app-container > .nexus-panel:nth-child(2) { animation-delay: -2s; }
 .app-container > .nexus-panel:nth-child(3) { animation-delay: -4s; }
 
 .nexus-panel:hover {
-  transform: translateY(-8px) scale(1.005);
+  transform: translateY(-9px) scale(1.005);
 }
 
 .nexus-panel::after {
-  content: "// SYS_ACTIVE";
+  content: "// SYS_ONLINE";
   position: absolute;
   top: 6px;
   right: 20px;
