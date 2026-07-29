@@ -1,49 +1,77 @@
-// Paramètres par défaut de l'application
+// =========================================================================
+// 1. CONFIGURATION PAR DÉFAUT & ÉTAT
+// =========================================================================
+
 const DEFAULT_SETTINGS = {
-  hue: "185",
-  radius: "4px",
-  scanlines: true,
-  sfx: true,
-  bgType: "particles",
-  bgColor: "#030509",
-  bgUrl: ""
+  hue: "185",             // Cyan par défaut
+  radius: "4px",          // Bords type "Cyber" par défaut
+  scanlines: true,        // Effet CRT activé
+  sfx: true,              // Effets sonores de l'UI activés
+  bgType: "particles",    // Type de fond par défaut
+  bgColor: "#030509",     // Couleur unie par défaut
+  bgUrl: ""               // URL de l'image vide par défaut
 };
 
-// Récupère les paramètres enregistrés ou charge les paramètres par défaut
+// Charge les paramètres depuis le cache du navigateur ou applique ceux par défaut
 let currentSettings = JSON.parse(localStorage.getItem('nexus_settings')) || { ...DEFAULT_SETTINGS };
 
+
+// =========================================================================
+// 2. EXPORTS PRINCIPAUX (Appelés par app.js)
+// =========================================================================
+
 /**
- * Initialise le gestionnaire de thème et bind les événements.
+ * Initialise le thème global, applique les paramètres et lance les écouteurs
  */
-export function initTheme() {
+export function initSettings() {
   applySettings(currentSettings);
   bindEvents();
 }
 
 /**
- * Applique l'ensemble des paramètres au DOM et sauvegarde dans localStorage.
- * @param {Object} settings 
+ * Initialise l'animation du Canvas (exporté ici car demandé par app.js)
+ */
+export function initParticles() {
+  const canvas = document.getElementById('bgCanvas');
+  if (!canvas) return;
+
+  // Si le mode particules n'est pas sélectionné, on coupe l'exécution
+  if (currentSettings.bgType !== 'particles') {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  canvas.style.display = 'block';
+  // (Insère ici ta logique d'animation du canvas de particules si tu en as une complexe, 
+  // sinon l'affichage est géré dynamiquement par applySettings).
+}
+
+
+// =========================================================================
+// 3. LOGIQUE D'APPLICATION DES PARAMÈTRES
+// =========================================================================
+
+/**
+ * Applique les paramètres au DOM et sauvegarde instantanément
  */
 function applySettings(settings) {
   const root = document.documentElement;
 
-  // 1. Appliquer la teinte principale (Hue HSL)
+  // 3.1. Variables CSS dynamiques
   root.style.setProperty('--primary-h', settings.hue);
-
-  // 2. Appliquer le rayon de bordure des éléments
   root.style.setProperty('--card-radius', settings.radius);
-
-  // 3. Appliquer la visibilité des Scanlines CRT
   root.style.setProperty('--scanline-opacity', settings.scanlines ? '0.15' : '0');
 
-  // 4. Gestion de l'arrière-plan
+  // 3.2. Gestion du fond d'écran
   const canvas = document.getElementById('bgCanvas');
   const bgColorGroup = document.getElementById('bgColorGroup');
   const bgUrlGroup = document.getElementById('bgUrlGroup');
 
+  // Affichage conditionnel des champs dans les paramètres
   if (bgColorGroup) bgColorGroup.style.display = (settings.bgType === 'color') ? 'block' : 'none';
   if (bgUrlGroup) bgUrlGroup.style.display = (settings.bgType === 'image') ? 'block' : 'none';
 
+  // Application visuelle du fond
   if (settings.bgType === 'color') {
     if (canvas) canvas.style.display = 'none';
     document.body.style.backgroundImage = 'none';
@@ -56,60 +84,66 @@ function applySettings(settings) {
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundAttachment = 'fixed';
   } else {
-    // Mode 'particles'
+    // Mode Particules
     if (canvas) canvas.style.display = 'block';
     document.body.style.backgroundImage = 'none';
     document.body.style.backgroundColor = 'var(--bg-dark)';
   }
 
-  // 5. Mettre à jour l'état visuel des contrôles dans le modal
+  // 3.3. Mise à jour de l'interface du Modal
   updateModalUI(settings);
 
-  // 6. Enregistrement automatique et instantané
+  // 3.4. SAUVEGARDE DIRECTE (Save-on-change)
   localStorage.setItem('nexus_settings', JSON.stringify(settings));
 }
 
 /**
- * Synchronise les éléments graphiques du modal avec l'objet de configuration.
- * @param {Object} settings 
+ * Synchronise les boutons/inputs du menu avec l'état actuel
  */
 function updateModalUI(settings) {
-  // Sélection active de la pastille de couleur
+  // Teintes (Hue)
   document.querySelectorAll('.color-dot').forEach(dot => {
     dot.classList.toggle('active', dot.dataset.hue === settings.hue);
   });
 
-  // Sélection active du bouton de géométrie
+  // Géométrie (Bordures)
   document.querySelectorAll('.radius-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.radius === settings.radius);
   });
 
-  // Checkbox Scanlines
+  // Interrupteurs (Toggles)
   const scanToggle = document.getElementById('scanlinesToggle');
   if (scanToggle) scanToggle.checked = settings.scanlines;
 
-  // Checkbox SFX
   const sfxToggle = document.getElementById('sfxToggle');
   if (sfxToggle) sfxToggle.checked = settings.sfx;
 
-  // Selecteur de fond
+  // Options du fond
   const bgSelect = document.getElementById('bgTypeSelect');
   if (bgSelect) bgSelect.value = settings.bgType;
 
-  // Input couleur de fond
   const bgColorInput = document.getElementById('bgColorInput');
   if (bgColorInput) bgColorInput.value = settings.bgColor;
 
-  // Input URL image de fond
   const bgUrlInput = document.getElementById('bgUrlInput');
   if (bgUrlInput) bgUrlInput.value = settings.bgUrl;
 }
 
-/**
- * Écoute les actions utilisateur pour appliquer et sauvegarder en direct.
- */
+
+// =========================================================================
+// 4. ÉCOUTEURS D'ÉVÉNEMENTS (INTERACTIONS UTILISATEUR)
+// =========================================================================
+
 function bindEvents() {
-  // Pastilles de couleur
+  // Modal Open/Close
+  const openBtn = document.getElementById('openSettingsBtn');
+  const closeBtn = document.getElementById('closeSettingsBtn');
+  const modal = document.getElementById('settingsModal');
+
+  if (openBtn && modal) openBtn.addEventListener('click', () => modal.classList.add('active'));
+  if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+  // Clic sur les pastilles de couleur néon
   document.querySelectorAll('.color-dot').forEach(dot => {
     dot.addEventListener('click', (e) => {
       currentSettings.hue = e.currentTarget.dataset.hue;
@@ -117,7 +151,7 @@ function bindEvents() {
     });
   });
 
-  // Boutons de rayon (Brut / Cyber / Lisse)
+  // Clic sur les boutons de géométrie (Brut, Cyber, Lisse)
   document.querySelectorAll('.radius-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       currentSettings.radius = e.currentTarget.dataset.radius;
@@ -125,7 +159,7 @@ function bindEvents() {
     });
   });
 
-  // Interrupteur Scanlines
+  // Clic sur l'interrupteur Scanlines
   const scanToggle = document.getElementById('scanlinesToggle');
   if (scanToggle) {
     scanToggle.addEventListener('change', (e) => {
@@ -134,7 +168,7 @@ function bindEvents() {
     });
   }
 
-  // Interrupteur Effets Sonores
+  // Clic sur l'interrupteur SFX (Sons UI)
   const sfxToggle = document.getElementById('sfxToggle');
   if (sfxToggle) {
     sfxToggle.addEventListener('change', (e) => {
@@ -143,7 +177,7 @@ function bindEvents() {
     });
   }
 
-  // Type de Fond
+  // Changement du menu déroulant du type de fond
   const bgSelect = document.getElementById('bgTypeSelect');
   if (bgSelect) {
     bgSelect.addEventListener('change', (e) => {
@@ -152,7 +186,7 @@ function bindEvents() {
     });
   }
 
-  // Couleur de Fond unie
+  // Sélection d'une couleur unie
   const bgColorInput = document.getElementById('bgColorInput');
   if (bgColorInput) {
     bgColorInput.addEventListener('input', (e) => {
@@ -161,7 +195,7 @@ function bindEvents() {
     });
   }
 
-  // URL Image de Fond
+  // Validation d'une URL pour l'image personnalisée
   const bgUrlInput = document.getElementById('bgUrlInput');
   if (bgUrlInput) {
     bgUrlInput.addEventListener('change', (e) => {
@@ -170,7 +204,7 @@ function bindEvents() {
     });
   }
 
-  // Bouton Réinitialiser
+  // Bouton Réinitialiser (Retour aux paramètres d'usine)
   const resetBtn = document.getElementById('resetSettingsBtn');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
