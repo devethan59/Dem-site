@@ -1,174 +1,63 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexus Dashboard</title>
-
-  <!-- Police & Icônes -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
-
-  <!-- DÉCOUPAGE DES FICHIERS CSS -->
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/modals.css">
-</head>
-<body>
-
-  <!-- Background Canvas pour Particules -->
-  <canvas id="bgCanvas"></canvas>
-
-  <div class="app-container">
-
-    <!-- En-tête / Widget Météo & Horloge -->
-    <header class="nexus-panel">
-      <div id="weatherWidget" class="weather-container"></div>
-    </header>
-
-    <!-- Moteur de recherche -->
-    <section class="nexus-panel">
-      <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Explorez le réseau..." autocomplete="off">
-        <button type="submit" class="cyber-btn" style="position: absolute; right: 8px;">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-      </form>
-    </section>
-
-    <!-- Favoris -->
-    <section class="nexus-panel">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; gap: 6px;" id="categoryFilters">
-          <button class="cyber-btn cat-btn active" data-cat="all">Tous</button>
-          <button class="cyber-btn cat-btn" data-cat="dev">Dev</button>
-          <button class="cyber-btn cat-btn" data-cat="media">Médias</button>
-          <button class="cyber-btn cat-btn" data-cat="loisirs">Loisirs</button>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <button id="toggleEditFavs" class="cyber-btn" title="Mode Édition"><i class="fa-solid fa-pen"></i></button>
-          <button id="addFavBtn" class="cyber-btn" title="Ajouter un favori"><i class="fa-solid fa-plus"></i></button>
-        </div>
-      </div>
-
-      <!-- Grille Générée par JS -->
-      <div id="favoritesGrid" class="favorites-grid"></div>
-    </section>
-
-  </div>
-
-  <!-- Bouton Paramètres Flottant -->
-  <button id="openSettingsBtn" class="cyber-btn" style="position: fixed; bottom: 20px; right: 20px; border-radius: 50%; width: 45px; height: 45px; padding: 0; justify-content: center; z-index: 100;">
-    <i class="fa-solid fa-gear" style="font-size: 1.2rem;"></i>
-  </button>
-
-  <!-- MODAL : Recherche -->
-  <div id="searchOverlay" class="modal-overlay">
-    <div class="modal-container" style="max-width: 800px; height: 80vh;">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px;">
-        <span id="overlayTitle" style="font-family: var(--font-title); color: var(--primary);">Résultats</span>
-        <button id="closeSearchOverlay" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="search-frame-body" style="height: calc(100% - 40px);"></div>
+<!-- MODAL : Paramètres -->
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h4 style="font-family: var(--font-title); color: var(--primary);">PARAMÈTRES SYSTÈME</h4>
+      <button id="closeSettingsBtn" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
     </div>
-  </div>
 
-  <!-- MODAL : Ajout de Favori -->
-  <div id="addFavModal" class="modal-overlay">
-    <div class="modal-container">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h4 style="font-family: var(--font-title); color: var(--primary);">NOUVEAU FAVORI</h4>
-        <button class="close-modal cyber-btn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <form id="favForm">
-        <div class="settings-group">
-          <label class="settings-label">Nom du site</label>
-          <input type="text" id="favNameInput" class="cyber-btn" style="width: 100%; text-align: left;" required>
-        </div>
-        <div class="settings-group">
-          <label class="settings-label">URL complète</label>
-          <input type="url" id="favUrlInput" class="cyber-btn" style="width: 100%; text-align: left;" placeholder="https://" required>
-        </div>
-        <div class="settings-group">
-          <label class="settings-label">Catégorie</label>
-          <select id="favCategoryInput" class="cyber-btn" style="width: 100%; background: #000;">
-            <option value="dev">Dev</option>
-            <option value="media">Médias</option>
-            <option value="loisirs">Loisirs</option>
-          </select>
-        </div>
-        <button type="submit" id="saveFavBtn" class="cyber-btn" style="width: 100%; justify-content: center; margin-top: 10px;">Enregistrer</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL : Paramètres -->
-  <div id="settingsModal" class="modal-overlay">
-    <div class="modal-container">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h4 style="font-family: var(--font-title); color: var(--primary);">PARAMÈTRES SYSTÈME</h4>
-        <button id="closeSettingsBtn" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="settings-group">
-        <label class="settings-label">Couleur Néon Dominante</label>
-        <div class="color-picker-grid">
-          <div class="color-dot" data-color="#00f0ff" style="background: #00f0ff;"></div>
-          <div class="color-dot" data-color="#ff0055" style="background: #ff0055;"></div>
-          <div class="color-dot" data-color="#7000ff" style="background: #7000ff;"></div>
-          <div class="color-dot" data-color="#00ff66" style="background: #00ff66;"></div>
-          <div class="color-dot" data-color="#ffb700" style="background: #ffb700;"></div>
-        </div>
-      </div>
-
-      <div class="settings-group">
-        <label class="settings-label">Type de Fond d'Écran</label>
-        <select id="bgTypeSelect" class="cyber-btn" style="width: 100%; background: #000;">
-          <option value="particles">Particules Noétiques</option>
-          <option value="color">Couleur Unie</option>
-          <option value="image">Image Personnalisée (URL)</option>
-        </select>
-      </div>
-
-      <div id="bgColorGroup" class="settings-group" style="display: none;">
-        <label class="settings-label">Couleur de Fond</label>
-        <input type="color" id="bgColorInput" value="#05070f" style="width: 100%; height: 35px; border: none; cursor: pointer;">
-      </div>
-
-      <div id="bgUrlGroup" class="settings-group" style="display: none;">
-        <label class="settings-label">Lien de l'image (URL)</label>
-        <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-btn" style="width: 100%;">
-      </div>
-
-      <div class="settings-group">
-        <label class="settings-label">Géométrie des Cartes</label>
-        <div style="display: flex; gap: 8px;">
-          <button class="cyber-btn" data-radius="0px" style="flex: 1; justify-content: center;">Brut</button>
-          <button class="cyber-btn" data-radius="4px" style="flex: 1; justify-content: center;">Cyber</button>
-          <button class="cyber-btn" data-radius="14px" style="flex: 1; justify-content: center;">Lisse</button>
-        </div>
-      </div>
-
-      <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="settings-label" style="margin: 0;">Lignes CRT (Scanlines)</span>
-        <input type="checkbox" id="scanlinesToggle" checked style="accent-color: var(--primary);">
-      </div>
-
-      <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="settings-label" style="margin: 0;">Effets Sonores UI</span>
-        <input type="checkbox" id="sfxToggle" checked style="accent-color: var(--primary);">
-      </div>
-
-      <div style="margin-top: 20px; text-align: right;">
-        <button id="resetSettingsBtn" class="cyber-btn" style="border-color: var(--secondary); color: var(--secondary);">Réinitialiser</button>
+    <!-- Choix de la couleur avec les teintes HSL (Hue) -->
+    <div class="settings-group">
+      <label class="settings-label">Couleur Néon Dominante</label>
+      <div class="color-picker-grid">
+        <div class="color-dot" data-hue="185" style="background: #00f0ff;"></div> <!-- Cyan -->
+        <div class="color-dot" data-hue="340" style="background: #ff0055;"></div> <!-- Rose -->
+        <div class="color-dot" data-hue="270" style="background: #7000ff;"></div> <!-- Violet -->
+        <div class="color-dot" data-hue="140" style="background: #00ff66;"></div> <!-- Vert -->
+        <div class="color-dot" data-hue="45"  style="background: #ffb700;"></div> <!-- Orange -->
       </div>
     </div>
-  </div>
 
-  <!-- Point d'entrée Javascript ES Module -->
-  <script type="module" src="js/app.js"></script>
-</body>
-</html>
+    <div class="settings-group">
+      <label class="settings-label">Type de Fond d'Écran</label>
+      <select id="bgTypeSelect" class="cyber-btn" style="width: 100%; background: #000;">
+        <option value="particles">Particules Noétiques</option>
+        <option value="color">Couleur Unie</option>
+        <option value="image">Image Personnalisée (URL)</option>
+      </select>
+    </div>
+
+    <div id="bgColorGroup" class="settings-group" style="display: none;">
+      <label class="settings-label">Couleur de Fond</label>
+      <input type="color" id="bgColorInput" value="#030509" style="width: 100%; height: 35px; border: none; cursor: pointer;">
+    </div>
+
+    <div id="bgUrlGroup" class="settings-group" style="display: none;">
+      <label class="settings-label">Lien de l'image (URL)</label>
+      <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-btn" style="width: 100%;">
+    </div>
+
+    <div class="settings-group">
+      <label class="settings-label">Géométrie des Cartes</label>
+      <div style="display: flex; gap: 8px;">
+        <button class="cyber-btn radius-btn" data-radius="0px" style="flex: 1; justify-content: center;">Brut</button>
+        <button class="cyber-btn radius-btn" data-radius="4px" style="flex: 1; justify-content: center;">Cyber</button>
+        <button class="cyber-btn radius-btn" data-radius="14px" style="flex: 1; justify-content: center;">Lisse</button>
+      </div>
+    </div>
+
+    <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="settings-label" style="margin: 0;">Lignes CRT (Scanlines)</span>
+      <input type="checkbox" id="scanlinesToggle" checked style="accent-color: var(--primary);">
+    </div>
+
+    <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="settings-label" style="margin: 0;">Effets Sonores UI</span>
+      <input type="checkbox" id="sfxToggle" checked style="accent-color: var(--primary);">
+    </div>
+
+    <div style="margin-top: 20px; text-align: right;">
+      <button id="resetSettingsBtn" class="cyber-btn" style="border-color: var(--secondary); color: var(--secondary);">Réinitialiser</button>
+    </div>
+  </div>
+</div>
