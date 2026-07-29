@@ -7,27 +7,53 @@
   gap: 25px;
 }
 
-/* Panneaux Déstructurés (Météo, Recherche, Favoris) */
+/* Animation Flottante */
+@keyframes cyberFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 10px var(--primary-glow); }
+  50% { box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 22px var(--primary-glow); }
+  100% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 10px var(--primary-glow); }
+}
+
+/* Panneaux Flottants avec Effet Verre & Neon */
 .nexus-panel, .weather-container {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-left: 4px solid var(--primary);
+  border-left: 3px solid var(--primary);
   border-radius: var(--card-radius);
-  backdrop-filter: blur(12px);
-  padding: 20px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 22px;
   clip-path: var(--clip-panel);
-  box-shadow: var(--panel-shadow);
   position: relative;
+  
+  /* Lévitation */
+  animation: cyberFloat 6s ease-in-out infinite, pulseGlow 4s ease-in-out infinite;
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+/* Décalage temporel des animations pour un rendu organique */
+.app-container > .nexus-panel:nth-child(1) { animation-delay: 0s; }
+.app-container > .nexus-panel:nth-child(2) { animation-delay: -2s; }
+.app-container > .nexus-panel:nth-child(3) { animation-delay: -4s; }
+
+.nexus-panel:hover {
+  transform: translateY(-8px) scale(1.005);
 }
 
 .nexus-panel::after {
-  content: "// SYS_OK";
+  content: "// SYS_ACTIVE";
   position: absolute;
-  top: 4px;
+  top: 6px;
   right: 20px;
   font-family: var(--font-title);
   font-size: 0.6rem;
   color: var(--primary);
-  opacity: 0.5;
+  opacity: 0.6;
   letter-spacing: 2px;
 }
