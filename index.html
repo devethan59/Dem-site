@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 
-  <!-- DÉCOUPAGE DES FICHIERS CSS -->
+  <!-- Fichiers CSS découpés -->
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -113,17 +113,19 @@
         <button id="closeSettingsBtn" class="cyber-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
+      <!-- Choix de Couleur Néon via valeurs Hue (Teintes HSL) -->
       <div class="settings-group">
         <label class="settings-label">Couleur Néon Dominante</label>
         <div class="color-picker-grid">
-          <div class="color-dot" data-color="#00f0ff" style="background: #00f0ff;"></div>
-          <div class="color-dot" data-color="#ff0055" style="background: #ff0055;"></div>
-          <div class="color-dot" data-color="#7000ff" style="background: #7000ff;"></div>
-          <div class="color-dot" data-color="#00ff66" style="background: #00ff66;"></div>
-          <div class="color-dot" data-color="#ffb700" style="background: #ffb700;"></div>
+          <div class="color-dot" data-hue="185" style="background: #00f0ff;" title="Cyan"></div>
+          <div class="color-dot" data-hue="340" style="background: #ff0055;" title="Rose"></div>
+          <div class="color-dot" data-hue="270" style="background: #7000ff;" title="Violet"></div>
+          <div class="color-dot" data-hue="140" style="background: #00ff66;" title="Vert"></div>
+          <div class="color-dot" data-hue="45"  style="background: #ffb700;" title="Orange"></div>
         </div>
       </div>
 
+      <!-- Mode de Fond d'écran -->
       <div class="settings-group">
         <label class="settings-label">Type de Fond d'Écran</label>
         <select id="bgTypeSelect" class="cyber-btn" style="width: 100%; background: #000;">
@@ -135,7 +137,7 @@
 
       <div id="bgColorGroup" class="settings-group" style="display: none;">
         <label class="settings-label">Couleur de Fond</label>
-        <input type="color" id="bgColorInput" value="#05070f" style="width: 100%; height: 35px; border: none; cursor: pointer;">
+        <input type="color" id="bgColorInput" value="#030509" style="width: 100%; height: 35px; border: none; cursor: pointer;">
       </div>
 
       <div id="bgUrlGroup" class="settings-group" style="display: none;">
@@ -143,15 +145,17 @@
         <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-btn" style="width: 100%;">
       </div>
 
+      <!-- Géométrie des cartes -->
       <div class="settings-group">
         <label class="settings-label">Géométrie des Cartes</label>
         <div style="display: flex; gap: 8px;">
-          <button class="cyber-btn" data-radius="0px" style="flex: 1; justify-content: center;">Brut</button>
-          <button class="cyber-btn" data-radius="4px" style="flex: 1; justify-content: center;">Cyber</button>
-          <button class="cyber-btn" data-radius="14px" style="flex: 1; justify-content: center;">Lisse</button>
+          <button class="cyber-btn radius-btn" data-radius="0px" style="flex: 1; justify-content: center;">Brut</button>
+          <button class="cyber-btn radius-btn" data-radius="4px" style="flex: 1; justify-content: center;">Cyber</button>
+          <button class="cyber-btn radius-btn" data-radius="14px" style="flex: 1; justify-content: center;">Lisse</button>
         </div>
       </div>
 
+      <!-- Options graphiques & sonores -->
       <div class="settings-group" style="display: flex; justify-content: space-between; align-items: center;">
         <span class="settings-label" style="margin: 0;">Lignes CRT (Scanlines)</span>
         <input type="checkbox" id="scanlinesToggle" checked style="accent-color: var(--primary);">
