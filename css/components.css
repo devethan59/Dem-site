@@ -1,4 +1,4 @@
-/* Barre de Recherche */
+/* Barre de recherche */
 #searchForm {
   position: relative;
   display: flex;
@@ -7,7 +7,7 @@
 
 #searchInput {
   width: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(3, 7, 15, 0.7);
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   padding: 14px 45px 14px 18px;
@@ -15,27 +15,28 @@
   font-family: var(--font-title);
   font-size: 0.95rem;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 #searchInput:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 15px var(--primary-glow);
+  box-shadow: 0 0 20px var(--primary-glow);
+  background: rgba(3, 7, 15, 0.9);
 }
 
-/* Grille et Cartes de Favoris */
+/* Grille et Cartes Favoris Flottantes */
 .favorites-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 15px;
+  gap: 16px;
   margin-top: 15px;
 }
 
 .fav-card {
-  background: var(--card-bg);
+  background: rgba(10, 16, 30, 0.65);
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
-  padding: 16px 10px;
+  padding: 18px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,20 +45,22 @@
   color: var(--text-main);
   clip-path: var(--clip-card);
   position: relative;
-  transition: all 0.15s ease;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .fav-card:hover {
   border-color: var(--primary);
-  background: rgba(0, 240, 255, 0.08);
-  transform: translate(-3px, -3px);
-  box-shadow: 3px 3px 0px var(--primary);
+  background: rgba(0, 240, 255, 0.12);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 10px 20px -5px var(--primary-glow);
 }
 
 .fav-icon-wrapper img {
   width: 32px;
   height: 32px;
   object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
 .fav-title {
@@ -65,9 +68,9 @@
   font-size: 0.75rem;
   font-weight: bold;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Bouton de Suppression de Favori */
 .delete-fav-btn {
   display: none;
   position: absolute;
@@ -88,9 +91,9 @@
   justify-content: center;
 }
 
-/* Boutons Cyber Universels */
+/* Boutons Cyber Flottants */
 .cyber-btn {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(5, 10, 20, 0.7);
   border: 1px solid var(--primary);
   color: var(--primary);
   padding: 8px 14px;
@@ -99,14 +102,16 @@
   font-size: 0.75rem;
   cursor: pointer;
   clip-path: var(--clip-btn);
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  backdrop-filter: blur(4px);
 }
 
 .cyber-btn:hover, .cyber-btn.active {
   background: var(--primary);
   color: #000;
-  box-shadow: 0 0 12px var(--primary-glow);
+  box-shadow: 0 0 15px var(--primary-glow);
+  transform: translateY(-2px);
 }
