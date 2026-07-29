@@ -1,200 +1,138 @@
-import { playUiSound } from './audio.js';
+// =========================================================================
+// 1. ÉTAT ET FAVORIS PAR DÉFAUT
+// =========================================================================
 
-let defaultFavs = [
-  { name: 'Google', url: 'https://google.com', category: 'dev' },
-  { name: 'YouTube', url: 'https://youtube.com', category: 'media' },
-  { name: 'GitHub', url: 'https://github.com', category: 'dev' },
-  { name: 'Wikipedia', url: 'https://wikipedia.org', category: 'social' }
+const DEFAULT_FAVORITES = [
+  { id: 1, title: 'GitHub', url: 'https://github.com', category: 'dev' },
+  { id: 2, title: 'YouTube', url: 'https://youtube.com', category: 'media' },
+  { id: 3, title: 'MDN Web', url: 'https://developer.mozilla.org', category: 'dev' }
 ];
 
-let favorites = JSON.parse(localStorage.getItem('nexus_favs')) || defaultFavs;
-let isEditing = false;
+let favorites = JSON.parse(localStorage.getItem('nexus_favs')) || DEFAULT_FAVORITES;
 let currentCategory = 'all';
+let isEditMode = false;
+
+// =========================================================================
+// 2. EXPORT PRINCIPAL (Appelé par app.js)
+// =========================================================================
 
 export function initFavorites() {
-  const toggleEditBtn = document.getElementById('toggleEditFavs') || document.querySelector('.fa-pen-to-square')?.parentElement;
-  const addFavBtn = document.getElementById('addFavBtn') || document.querySelector('.fa-plus')?.parentElement;
-  const addModal = document.getElementById('addFavModal');
-  const closeModalBtn = addModal?.querySelector('.fa-xmark')?.parentElement || addModal?.querySelector('.close-modal');
-  
-  // Bouton de validation dans la modal
-  const saveFavBtn = document.getElementById('saveFavBtn') || addModal?.querySelector('button[type="submit"]') || addModal?.querySelector('button:not(.close-modal)');
-  const favForm = addModal?.querySelector('form');
-
-  const catBtns = document.querySelectorAll('.cat-btn') || document.querySelectorAll('[data-cat]');
-
   renderFavorites();
-
-  // Mode Édition
-  toggleEditBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    playUiSound(400, 0.05);
-    isEditing = !isEditing;
-    toggleEditBtn.classList.toggle('active', isEditing);
-    document.getElementById('favoritesGrid')?.classList.toggle('editing', isEditing);
-  });
-
-  // Ouvrir Modal d'ajout (+ nouveau favori)
-  addFavBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    playUiSound(500, 0.05);
-    if (addModal) {
-      addModal.classList.add('active');
-      addModal.style.display = 'flex'; // Sécurité d'affichage
-    }
-  });
-
-  // Fermer Modal
-  const closeModal = () => {
-    playUiSound(400, 0.05);
-    if (addModal) {
-      addModal.classList.remove('active');
-      addModal.style.display = 'none';
-    }
-  };
-
-  closeModalBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeModal();
-  });
-
-  addModal?.addEventListener('click', (e) => {
-    if (e.target === addModal) closeModal();
-  });
-
-  // Filtrage par catégories (Tous, Dev, Médias, Loisirs)
-  catBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      playUiSound(550, 0.03);
-      
-      catBtns.forEach(b => {
-        b.classList.remove('active');
-        b.style.opacity = '0.6';
-        b.style.borderColor = 'transparent';
-      });
-
-      btn.classList.add('active');
-      btn.style.opacity = '1';
-      btn.style.borderColor = 'var(--primary)';
-
-      // Mapping normalisé des filtres
-      const rawCat = (btn.dataset.cat || btn.textContent.trim()).toLowerCase();
-      if (rawCat.includes('tous') || rawCat === 'all') currentCategory = 'all';
-      else if (rawCat.includes('dev')) currentCategory = 'dev';
-      else if (rawCat.includes('médias') || rawCat.includes('media')) currentCategory = 'media';
-      else if (rawCat.includes('loisirs')) currentCategory = 'loisirs';
-      else currentCategory = rawCat;
-
-      renderFavorites();
-    });
-  });
-
-  // Fonction de création du favori
-  const handleSave = (e) => {
-    if (e) e.preventDefault(); // Empêche le rechargement de la page
-
-    const nameInput = document.getElementById('favNameInput') || addModal?.querySelector('input[type="text"]');
-    const urlInput = document.getElementById('favUrlInput') || addModal?.querySelector('input[type="url"]') || addModal?.querySelectorAll('input')[1];
-    const catSelect = document.getElementById('favCategoryInput') || addModal?.querySelector('select');
-
-    const name = nameInput?.value.trim();
-    let url = urlInput?.value.trim();
-    let category = catSelect?.value || 'dev';
-
-    if (!name || !url) {
-      alert('Veuillez remplir le nom et l\'URL.');
-      return;
-    }
-
-    playUiSound(800, 0.05);
-
-    // Ajout automatique du HTTPS si manquant
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      url = 'https://' + url;
-    }
-
-    // Normalisation de la catégorie
-    category = category.toLowerCase();
-    if (category.includes('média')) category = 'media';
-    if (category.includes('loisir')) category = 'loisirs';
-
-    favorites.push({ name, url, category });
-    localStorage.setItem('nexus_favs', JSON.stringify(favorites));
-
-    if (nameInput) nameInput.value = '';
-    if (urlInput) urlInput.value = '';
-
-    closeModal();
-    renderFavorites();
-  };
-
-  // Écoute sur le bouton ET le submit du formulaire
-  saveFavBtn?.addEventListener('click', handleSave);
-  favForm?.addEventListener('submit', handleSave);
+  bindEvents();
 }
 
-function renderFavorites() {
-  const grid = document.getElementById('favoritesGrid') || document.querySelector('.favorites-grid');
-  if (!grid) return;
+// =========================================================================
+// 3. RENDU DES FAVORIS DANS LE DOM
+// =========================================================================
 
-  grid.innerHTML = '';
+export function renderFavorites() {
+  const container = document.getElementById('favoritesGrid');
+  if (!container) return;
 
-  const filteredFavs = currentCategory === 'all' 
+  // Filtrage selon la catégorie sélectionnée
+  const filtered = currentCategory === 'all' 
     ? favorites 
-    : favorites.filter(f => {
-        const c = f.category.toLowerCase();
-        if (currentCategory === 'media') return c === 'media' || c === 'médias';
-        if (currentCategory === 'loisirs') return c === 'loisirs' || c === 'social';
-        return c === currentCategory;
-      });
+    : favorites.filter(fav => fav.category === currentCategory);
 
-  if (filteredFavs.length === 0) {
-    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #666; font-size: 0.85rem; padding: 20px;">Aucun favori dans cette catégorie.</div>`;
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <p style="color: var(--text-muted); text-align: center; grid-column: 1/-1; padding: 20px;">
+        Aucun favori enregistré dans cette catégorie.
+      </p>`;
     return;
   }
 
-  filteredFavs.forEach((fav) => {
-    const card = document.createElement('a');
-    card.href = fav.url;
-    card.target = '_blank';
-    card.className = 'fav-card';
-    
-    let domain = 'google.com';
-    try {
-      domain = new URL(fav.url).hostname;
-    } catch (e) {}
+  // Génération du HTML des cartes
+  container.innerHTML = filtered.map(fav => `
+    <div class="fav-card ${isEditMode ? 'edit-mode' : ''}" style="position: relative;">
+      ${isEditMode ? `
+        <button class="delete-fav-btn" data-id="${fav.id}" title="Supprimer" style="position: absolute; top: -6px; right: -6px; background: var(--secondary, #ff0055); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      ` : ''}
+      <a href="${fav.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <div class="fav-icon-wrapper" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+          <img src="https://www.google.com/s2/favicons?domain=${fav.url}&sz=64" alt="${fav.title}" style="width: 24px; height: 24px; border-radius: 4px;">
+        </div>
+        <span class="fav-title" style="font-size: 0.85rem; text-align: center; font-weight: 500;">${fav.title}</span>
+      </a>
+    </div>
+  `).join('');
 
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-    const firstLetter = fav.name.charAt(0).toUpperCase();
+  // Gestion des clics de suppression en mode édition
+  if (isEditMode) {
+    container.querySelectorAll('.delete-fav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = parseInt(e.currentTarget.dataset.id);
+        deleteFavorite(id);
+      });
+    });
+  }
+}
 
-    card.innerHTML = `
-      <button class="delete-fav-btn" title="Supprimer"><i class="fa-solid fa-xmark"></i></button>
-      <div class="fav-icon-wrapper">
-        <img src="${faviconUrl}" alt="${fav.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <span class="fav-icon-fallback" style="display:none;">${firstLetter}</span>
-      </div>
-      <span class="fav-title">${fav.name}</span>
-    `;
+function deleteFavorite(id) {
+  favorites = favorites.filter(f => f.id !== id);
+  localStorage.setItem('nexus_favs', JSON.stringify(favorites));
+  renderFavorites();
+}
 
-    // Suppression du favori
-    card.querySelector('.delete-fav-btn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      playUiSound(250, 0.08);
-      favorites = favorites.filter(f => f !== fav);
-      localStorage.setItem('nexus_favs', JSON.stringify(favorites));
+// =========================================================================
+// 4. ÉCOUTEURS D'ÉVÉNEMENTS
+// =========================================================================
+
+function bindEvents() {
+  // Filtres par catégorie
+  document.querySelectorAll('#categoryFilters .cat-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('#categoryFilters .cat-btn').forEach(b => b.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      currentCategory = e.currentTarget.dataset.cat;
       renderFavorites();
     });
-
-    card.addEventListener('click', (e) => {
-      if (isEditing) {
-        e.preventDefault();
-      } else {
-        playUiSound(750, 0.04);
-      }
-    });
-
-    grid.appendChild(card);
   });
+
+  // Basculer le mode édition
+  const editBtn = document.getElementById('toggleEditFavs');
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      isEditMode = !isEditMode;
+      editBtn.classList.toggle('active', isEditMode);
+      renderFavorites();
+    });
+  }
+
+  // Modale d'ajout de favori
+  const addBtn = document.getElementById('addFavBtn');
+  const closeAddBtn = document.getElementById('closeAddFavBtn');
+  const modal = document.getElementById('addFavModal');
+  const form = document.getElementById('favForm');
+
+  if (addBtn && modal) addBtn.addEventListener('click', () => modal.classList.add('active'));
+  if (closeAddBtn && modal) closeAddBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('favNameInput')?.value.trim();
+      let url = document.getElementById('favUrlInput')?.value.trim();
+      const category = document.getElementById('favCategoryInput')?.value || 'dev';
+
+      if (!name || !url) return;
+
+      // Ajouter https:// si l'utilisateur l'a oublié
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+
+      const newFav = { id: Date.now(), title: name, url, category };
+      favorites.push(newFav);
+      localStorage.setItem('nexus_favs', JSON.stringify(favorites));
+
+      form.reset();
+      if (modal) modal.classList.remove('active');
+      renderFavorites();
+    });
+  }
 }
