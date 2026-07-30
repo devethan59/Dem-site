@@ -7,49 +7,48 @@ import { initAudioGenerator, playUiSound } from './audio.js';
 import { initWeather } from './weather.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Exécution isolée des modules pour éviter toute interruption d'application
-  const launchModule = (name, fn) => {
+  // Exécution sécurisée pour parer à toute erreur
+  const safeInit = (name, fn) => {
     try {
       if (typeof fn === 'function') fn();
     } catch (err) {
-      console.error(`[Problème Module - ${name}]:`, err);
+      console.warn(`[Module ${name}] non initialisé :`, err);
     }
   };
 
-  // Initialisation par ordre de priorité
-  launchModule('Settings', initSettings);
-  launchModule('Particles', initParticles);
-  launchModule('Audio', initAudioGenerator);
-  launchModule('Clock & Timer', initClockAndTimer);
-  launchModule('Weather', initWeather);
-  launchModule('Search Engine', initSearchEngine);
-  launchModule('Favorites', initFavorites);
-  launchModule('Todos & Sidebar', initSidebarAndTodos);
+  safeInit('Settings', initSettings);
+  safeInit('Particles', initParticles);
+  safeInit('Audio', initAudioGenerator);
+  safeInit('Clock & Timer', initClockAndTimer);
+  safeInit('Weather', initWeather);
+  safeInit('Search Engine', initSearchEngine);
+  safeInit('Favorites', initFavorites);
+  safeInit('Todos & Sidebar', initSidebarAndTodos);
 
-  // Sons d'interface interactifs
+  // Sons UI sur clics
   document.addEventListener('click', (e) => {
     if (e.target.closest('.cyber-btn, .fav-card, .color-dot, .radius-btn')) {
       if (typeof playUiSound === 'function') playUiSound(600, 0.03);
     }
   });
 
-  // Raccourcis clavier universels
+  // Raccourcis Clavier Globaux
   document.addEventListener('keydown', (e) => {
-    // Focus Recherche avec Ctrl+K ou Cmd+K
+    // Ctrl + K / Cmd + K : Focus Barre de Recherche
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.focus();
+      const input = document.getElementById('searchInput');
+      if (input) {
+        input.focus();
         if (typeof playUiSound === 'function') playUiSound(800, 0.04);
       }
     }
 
-    // Fermeture automatique de toute modale ouverte avec la touche Échap
+    // Touche Échap : Fermeture de toutes les modales
     if (e.key === 'Escape') {
       const activeModals = document.querySelectorAll('.modal-overlay.active');
       if (activeModals.length > 0) {
-        activeModals.forEach(modal => modal.classList.remove('active'));
+        activeModals.forEach(m => m.classList.remove('active'));
         if (typeof playUiSound === 'function') playUiSound(300, 0.04);
       }
     }
