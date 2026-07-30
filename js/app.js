@@ -7,7 +7,6 @@ import { initAudioGenerator, playUiSound } from './audio.js';
 import { initWeather } from './weather.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Exécution sécurisée pour parer à toute erreur
   const safeInit = (name, fn) => {
     try {
       if (typeof fn === 'function') fn();
@@ -16,25 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Initialisation complète
+  safeInit('Clock & Timer', initClockAndTimer);
   safeInit('Settings', initSettings);
   safeInit('Particles', initParticles);
   safeInit('Audio', initAudioGenerator);
-  safeInit('Clock & Timer', initClockAndTimer);
   safeInit('Weather', initWeather);
   safeInit('Search Engine', initSearchEngine);
   safeInit('Favorites', initFavorites);
   safeInit('Todos & Sidebar', initSidebarAndTodos);
 
-  // Sons UI sur clics
+  // Interaction sonore
   document.addEventListener('click', (e) => {
     if (e.target.closest('.cyber-btn, .fav-card, .color-dot, .radius-btn')) {
       if (typeof playUiSound === 'function') playUiSound(600, 0.03);
     }
   });
 
-  // Raccourcis Clavier Globaux
+  // Navigation Clavier
   document.addEventListener('keydown', (e) => {
-    // Ctrl + K / Cmd + K : Focus Barre de Recherche
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
       const input = document.getElementById('searchInput');
@@ -44,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Touche Échap : Fermeture de toutes les modales
     if (e.key === 'Escape') {
       const activeModals = document.querySelectorAll('.modal-overlay.active');
       if (activeModals.length > 0) {
