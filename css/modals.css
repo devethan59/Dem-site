@@ -1,68 +1,120 @@
-/* Modals Overlay & Containers */
 .modal-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(2, 4, 10, 0.88);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(2, 4, 8, 0.85);
   backdrop-filter: blur(8px);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
 }
 
 .modal-overlay.active {
   opacity: 1;
-  visibility: visible;
+  pointer-events: all;
 }
 
 .modal-container {
-  width: 92%;
-  max-width: 520px;
-  max-height: 85vh;
+  width: 90%;
+  max-width: 450px;
+  max-height: 90vh;
   overflow-y: auto;
-  background: #050811;
-  border: 2px solid var(--primary);
-  border-radius: var(--card-radius);
-  padding: 22px;
-  clip-path: var(--clip-panel);
-  box-shadow: 0 0 25px var(--primary-glow);
 }
 
-/* Groupes de Paramètres */
-.settings-group {
-  margin-bottom: 18px;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--panel-border);
   padding-bottom: 10px;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h4 {
+  font-family: var(--font-title);
+  color: var(--primary);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .settings-label {
-  display: block;
   font-family: var(--font-title);
   font-size: 0.75rem;
-  color: var(--primary);
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
 }
 
-/* Selecteur de Couleurs en Grille */
 .color-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  display: flex;
+  gap: 12px;
 }
 
 .color-dot {
-  height: 32px;
-  border-radius: var(--card-radius);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.2s, border-color 0.2s;
 }
 
-.color-dot:hover, .color-dot.active {
-  transform: scale(1.1);
+.color-dot:hover {
+  transform: scale(1.15);
   border-color: #fff;
 }
+
+.radius-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.color-picker-input {
+  width: 100%;
+  height: 38px;
+  border: none;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  background: transparent;
+}
+
+.modal-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.danger-btn {
+  border-color: var(--secondary);
+  color: var(--secondary);
+}
+
+.danger-btn:hover {
+  background: var(--secondary);
+  color: #fff;
+  box-shadow: 0 0 12px var(--secondary);
+}
+
+.text-left { text-align: left; }
+.full-width { width: 100%; }
+.flex-center { justify-content: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.margin-0 { margin: 0; }
+.dark-select { background: #000; }
