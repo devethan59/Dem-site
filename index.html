@@ -23,9 +23,16 @@
 
   <div class="app-container">
 
-    <!-- En-tête : Widget Météo & Horloge -->
-    <header class="nexus-panel">
-      <div id="weatherWidget" class="weather-container"></div>
+    <!-- En-tête : Horloge & Widget Météo -->
+    <header class="nexus-panel" style="display: flex; flex-direction: column; gap: 15px; align-items: center; justify-content: center; text-align: center;">
+      <!-- Horloge Digitale -->
+      <div id="clockWidget" class="clock-container" style="font-family: var(--font-title, 'Orbitron', monospace);">
+        <div id="clockDisplay" style="font-size: 2.2rem; font-weight: 700; color: var(--primary, #00f0ff); text-shadow: 0 0 10px var(--primary, #00f0ff); letter-spacing: 2px;">00:00:00</div>
+        <div id="dateDisplay" style="font-size: 0.85rem; color: var(--text-muted, #888); margin-top: 4px; text-transform: capitalize;">---</div>
+      </div>
+
+      <!-- Météo -->
+      <div id="weatherWidget" class="weather-container" style="width: 100%;"></div>
     </header>
 
     <!-- Moteur de Recherche -->
@@ -60,17 +67,17 @@
 
   </div>
 
-  <!-- Badge de Version en bas à gauche -->
+  <!-- Badge Version -->
   <div class="version-tag" style="position: fixed; bottom: 15px; left: 20px; font-family: var(--font-title, 'Orbitron', monospace); font-size: 0.75rem; color: var(--primary, #00f0ff); opacity: 0.7; letter-spacing: 1px; pointer-events: none; z-index: 90; text-shadow: 0 0 5px var(--primary, #00f0ff);">
     v0.1.0
   </div>
 
-  <!-- Bouton Flottant de Configuration -->
+  <!-- Bouton Paramètres -->
   <button id="openSettingsBtn" class="cyber-btn" aria-label="Paramètres" style="position: fixed; bottom: 20px; right: 20px; border-radius: 50%; width: 45px; height: 45px; padding: 0; justify-content: center; z-index: 100;">
     <i class="fa-solid fa-gear" style="font-size: 1.2rem;"></i>
   </button>
 
-  <!-- MODAL : Ajout de Favori -->
+  <!-- MODAL : Ajout Favori -->
   <div id="addFavModal" class="modal-overlay">
     <div class="modal-container">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
