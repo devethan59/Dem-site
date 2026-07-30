@@ -1,4 +1,3 @@
-// Dictionnaire des moteurs de recherche et raccourcis
 const ENGINES = {
   google: { name: 'Google', url: 'https://www.google.com/search?q=', prefix: 'g/' },
   duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=', prefix: 'ddg/' },
@@ -19,7 +18,6 @@ export function initSearchEngine() {
 
   if (!form || !input) return;
 
-  // Initialisation du sélecteur
   if (selector) {
     selector.value = activeEngine;
     selector.addEventListener('change', (e) => {
@@ -28,14 +26,12 @@ export function initSearchEngine() {
     });
   }
 
-  // Soumission du formulaire
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const query = input.value.trim();
     if (query) executeSearch(query);
   });
 
-  // Gestion de l'autocomplétion et raccourcis clavier dans l'input
   input.addEventListener('input', () => {
     const query = input.value.trim();
     selectedSuggestionIndex = -1;
@@ -47,7 +43,6 @@ export function initSearchEngine() {
     }
   });
 
-  // Navigation dans les suggestions avec les flèches du clavier
   input.addEventListener('keydown', (e) => {
     if (!suggestionsBox || suggestionsBox.style.display === 'none') return;
     const items = suggestionsBox.querySelectorAll('li');
@@ -70,7 +65,6 @@ export function initSearchEngine() {
     }
   });
 
-  // Fermer les suggestions si on clique ailleurs
   document.addEventListener('click', (e) => {
     if (!form.contains(e.target) && suggestionsBox) {
       suggestionsBox.style.display = 'none';
@@ -81,7 +75,6 @@ export function initSearchEngine() {
 function executeSearch(query) {
   let targetUrl = '';
 
-  // 1. Détection de préfixe (ex: yt/ cyberpunk)
   for (const key in ENGINES) {
     const engine = ENGINES[key];
     if (query.startsWith(engine.prefix)) {
@@ -92,7 +85,6 @@ function executeSearch(query) {
     }
   }
 
-  // 2. Détection si la saisie est une URL directe
   const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-.\/?%&=]*)?$/i;
   if (urlPattern.test(query) || query.startsWith('localhost:')) {
     targetUrl = /^https?:\/\//i.test(query) ? query : 'https://' + query;
@@ -100,13 +92,11 @@ function executeSearch(query) {
     return;
   }
 
-  // 3. Recherche classique via le moteur actif
   const currentEngine = ENGINES[activeEngine] || ENGINES.google;
   targetUrl = currentEngine.url + encodeURIComponent(query);
   window.open(targetUrl, '_blank');
 }
 
-// Récupération dynamique des suggestions via JSONP Google
 function fetchSuggestions(query) {
   const suggestionsBox = document.getElementById('searchSuggestions');
   if (!suggestionsBox) return;
@@ -115,7 +105,7 @@ function fetchSuggestions(query) {
   window.googleSuggestCallback = (data) => {
     const suggestions = data[1] || [];
     renderSuggestions(suggestions);
-    document.body.removeChild(script);
+    if (script.parentNode) script.parentNode.removeChild(script);
   };
 
   script.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&callback=googleSuggestCallback`;
@@ -132,14 +122,14 @@ function renderSuggestions(suggestions) {
   }
 
   suggestionsBox.innerHTML = suggestions.slice(0, 6).map((item) => `
-    <li data-value="${item}" style="padding: 10px 15px; cursor: pointer; color: #fff; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;" onmouseover="this.style.background='rgba(0, 240, 255, 0.2)'" onmouseout="this.style.background='transparent'">
-      <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem; margin-right: 8px; color: var(--primary, #00f0ff);"></i>${item}
+    <li data-value="${item}" style="padding: 10px 14px; cursor: pointer; color: #e0e0e0; font-size: 0.88rem; display: flex; align-items: center; gap: 10px; transition: background 0.15s, color 0.15s;" onmouseover="this.style.background='rgba(0, 240, 255, 0.15)'; this.style.color='var(--primary, #00f0ff)';" onmouseout="this.style.background='transparent'; this.style.color='#e0e0e0';">
+      <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem; color: var(--primary, #00f0ff); opacity: 0.8;"></i>
+      <span>${item}</span>
     </li>
   `).join('');
 
   suggestionsBox.style.display = 'block';
 
-  // Clic sur une suggestion
   suggestionsBox.querySelectorAll('li').forEach(li => {
     li.addEventListener('click', () => {
       const input = document.getElementById('searchInput');
@@ -153,11 +143,11 @@ function renderSuggestions(suggestions) {
 function highlightSuggestion(items) {
   items.forEach((item, idx) => {
     if (idx === selectedSuggestionIndex) {
-      item.style.background = 'rgba(0, 240, 255, 0.3)';
+      item.style.background = 'rgba(0, 240, 255, 0.25)';
       item.style.color = 'var(--primary, #00f0ff)';
     } else {
       item.style.background = 'transparent';
-      item.style.color = '#fff';
+      item.style.color = '#e0e0e0';
     }
   });
 }
