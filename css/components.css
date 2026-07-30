@@ -1,97 +1,259 @@
-/* Barre de recherche */
-#searchForm {
+/* Boutons Cyberpunk */
+.cyber-btn {
+  background: rgba(4, 10, 18, 0.85);
+  border: 1px solid var(--panel-border);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  outline: none;
+  backdrop-filter: blur(8px);
+}
+
+.cyber-btn:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.cyber-btn.active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+  box-shadow: 0 0 15px var(--primary-glow);
+  font-weight: 700;
+}
+
+.cyber-btn.icon-only {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  justify-content: center;
+}
+
+/* Formulaires & Inputs */
+.cyber-input {
+  width: 100%;
+  height: 42px;
+  background: rgba(3, 7, 13, 0.9);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--card-radius);
+  color: var(--text-main);
+  padding: 0 14px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.cyber-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* Panneaux HUD */
+.nexus-panel {
   position: relative;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.03);
+  transition: border-color var(--transition-fast);
+}
+
+.nexus-panel::before {
+  content: '// SYS_ONLINE';
+  position: absolute;
+  top: -9px;
+  right: 15px;
+  font-family: var(--font-title);
+  font-size: 0.62rem;
+  color: var(--primary);
+  background: var(--bg-dark);
+  padding: 0 6px;
+  letter-spacing: 1.5px;
+  opacity: 0.8;
+}
+
+/* En-tête HUD & Horloge */
+.hud-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.glow-text {
+  font-family: var(--font-title);
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: var(--primary);
+  text-shadow: 0 0 15px var(--primary-glow);
+  letter-spacing: 3px;
+}
+
+.date-text {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* Moteur de Recherche */
+.search-form {
   display: flex;
   align-items: center;
+  gap: 10px;
+  position: relative;
 }
 
-#searchInput {
-  width: 100%;
-  background: rgba(3, 7, 15, 0.7);
-  border: 1px solid var(--card-border);
+.engine-selector-wrapper select {
+  height: 42px;
+  background: rgba(3, 7, 13, 0.95);
+  color: var(--primary);
+  border-color: var(--panel-border);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.input-container {
+  position: relative;
+  flex: 1;
+}
+
+/* Autocomplétion Dropdown */
+.suggestions-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  max-height: 220px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  background: rgba(4, 8, 16, 0.98);
+  border: 1px solid var(--primary);
   border-radius: var(--card-radius);
-  padding: 14px 45px 14px 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px var(--primary-glow);
+  backdrop-filter: blur(15px);
+}
+
+.suggestions-dropdown li {
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.15s;
+}
+
+.suggestions-dropdown li:hover {
+  background: var(--primary-glow);
   color: #fff;
-  font-family: var(--font-title);
-  font-size: 0.95rem;
-  outline: none;
-  transition: all 0.3s ease;
+  padding-left: 18px;
 }
 
-#searchInput:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 20px var(--primary-glow);
-  background: rgba(3, 7, 15, 0.9);
+/* Grille des Favoris */
+.fav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* Cartes de Favoris Flottantes */
+.category-filters, .fav-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .favorites-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 16px;
-  margin-top: 15px;
+  gap: 14px;
 }
 
 .fav-card {
-  background: rgba(10, 16, 30, 0.65);
-  border: 1px solid var(--card-border);
+  position: relative;
+  background: rgba(4, 10, 18, 0.6);
+  border: 1px solid var(--panel-border);
   border-radius: var(--card-radius);
-  padding: 18px 10px;
+  padding: 16px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   text-decoration: none;
   color: var(--text-main);
-  clip-path: var(--clip-card);
-  position: relative;
-  backdrop-filter: blur(8px);
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all var(--transition-fast);
 }
 
 .fav-card:hover {
   border-color: var(--primary);
-  background: rgba(0, 240, 255, 0.12);
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 10px 20px -5px var(--primary-glow);
+  box-shadow: 0 0 15px var(--primary-glow);
+  transform: translateY(-3px);
+  background: rgba(0, 240, 255, 0.05);
 }
 
-.fav-icon-wrapper img {
+.fav-card img {
   width: 32px;
   height: 32px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
-.fav-title {
+.fav-card span {
   font-family: var(--font-title);
   font-size: 0.75rem;
-  font-weight: bold;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
 }
 
-/* Boutons Cyber Flottants */
-.cyber-btn {
-  background: rgba(5, 10, 20, 0.7);
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  padding: 8px 14px;
-  border-radius: var(--card-radius);
+/* Style Bouton Paramètres flottant & Version */
+.version-tag {
+  position: fixed;
+  bottom: 15px;
+  left: 20px;
   font-family: var(--font-title);
   font-size: 0.75rem;
-  cursor: pointer;
-  clip-path: var(--clip-btn);
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  backdrop-filter: blur(4px);
+  color: var(--primary);
+  opacity: 0.7;
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 90;
+  text-shadow: 0 0 5px var(--primary-glow);
 }
 
-.cyber-btn:hover, .cyber-btn.active {
-  background: var(--primary);
-  color: #000;
-  box-shadow: 0 0 15px var(--primary-glow);
-  transform: translateY(-2px);
+.floating-settings-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 50% !important;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  justify-content: center;
+  z-index: 100;
+  font-size: 1.2rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
