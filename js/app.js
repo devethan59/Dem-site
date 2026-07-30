@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Initialisation complète
   safeInit('Clock & Timer', initClockAndTimer);
   safeInit('Settings', initSettings);
   safeInit('Particles', initParticles);
