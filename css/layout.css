@@ -1,59 +1,68 @@
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+
 .app-container {
-  max-width: 1100px;
+  position: relative;
+  z-index: 10;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 25px 15px;
+  padding: 24px 16px 80px 16px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 20px;
 }
 
-/* Animations de Flottaison & Pulsation */
-@keyframes cyberFloat {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-7px); }
-  100% { transform: translateY(0px); }
+.clock-container {
+  text-align: center;
 }
 
-@keyframes pulseGlow {
-  0% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 12px var(--primary-glow); }
-  50% { box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 24px var(--primary-glow); }
-  100% { box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 12px var(--primary-glow); }
-}
-
-/* Panneaux Flottants avec Effet Verre */
-.nexus-panel, .weather-container {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-left: 3px solid var(--primary);
-  border-radius: var(--card-radius);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 22px;
-  clip-path: var(--clip-panel);
-  position: relative;
-  
-  /* Application de la flottaison continue */
-  animation: cyberFloat 6s ease-in-out infinite, pulseGlow 4s ease-in-out infinite;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, background 0.3s ease;
-}
-
-/* Décalage des animations pour chaque panneau (effet organique) */
-.app-container > .nexus-panel:nth-child(1) { animation-delay: 0s; }
-.app-container > .nexus-panel:nth-child(2) { animation-delay: -2s; }
-.app-container > .nexus-panel:nth-child(3) { animation-delay: -4s; }
-
-.nexus-panel:hover {
-  transform: translateY(-9px) scale(1.005);
-}
-
-.nexus-panel::after {
-  content: "// SYS_ONLINE";
-  position: absolute;
-  top: 6px;
-  right: 20px;
-  font-family: var(--font-title);
-  font-size: 0.6rem;
-  color: var(--primary);
-  opacity: 0.6;
+.clock-display {
+  font-family: var(--font-title, 'Orbitron', sans-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary, #00f0ff);
+  text-shadow: 0 0 10px var(--primary-glow, rgba(0, 240, 255, 0.4));
   letter-spacing: 2px;
+}
+
+.date-display {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7293a6);
+  margin-top: 4px;
+  text-transform: capitalize;
+}
+
+.version-tag {
+  position: fixed;
+  bottom: 15px;
+  left: 20px;
+  font-family: var(--font-title, 'Orbitron', sans-serif);
+  font-size: 0.75rem;
+  color: var(--primary, #00f0ff);
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 90;
+}
+
+.settings-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 50% !important;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  z-index: 100;
+}
+
+@media (max-width: 600px) {
+  .app-container {
+    padding: 16px 12px 90px 12px;
+    gap: 16px;
+  }
+
+  .clock-display {
+    font-size: 1.8rem;
+  }
 }
