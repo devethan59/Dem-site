@@ -32,11 +32,11 @@
       <div id="weatherWidget" class="weather-container" style="width: 100%;"></div>
     </header>
 
-    <!-- MOTEUR DE RECHERCHE MACHINE DE GUERRE -->
-    <section class="nexus-panel" style="position: relative;">
+    <!-- MOTEUR DE RECHERCHE -->
+    <section class="nexus-panel" style="position: relative; z-index: 50;">
       <form id="searchForm" autocomplete="off" style="position: relative; display: flex; align-items: center; gap: 8px;">
         
-        <!-- Sélecteur de Moteur avec Icônes -->
+        <!-- Sélecteur de Moteur -->
         <select id="engineSelector" class="cyber-btn" style="background: rgba(0,0,0,0.8); height: 42px; border-radius: var(--card-radius, 4px); padding: 0 10px; cursor: pointer; color: var(--primary, #00f0ff);">
           <option value="google">Google</option>
           <option value="duckduckgo">DuckDuckGo</option>
@@ -47,10 +47,10 @@
         </select>
 
         <div style="position: relative; flex: 1;">
-          <input type="text" id="searchInput" placeholder="Rechercher ou préfixe (g/, yt/, gh/, wiki/, ai/)..." autocomplete="off" style="width: 100%; height: 42px; padding-right: 40px;">
+          <input type="text" id="searchInput" placeholder="Rechercher ou préfixe (g/, yt/, gh/, wiki/, ai/)..." autocomplete="off" style="width: 100%; height: 42px;">
           
-          <!-- Dropdown d'autocomplétion -->
-          <ul id="searchSuggestions" class="nexus-panel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 5px; z-index: 200; max-height: 250px; overflow-y: auto; list-style: none; padding: 0; background: rgba(5, 8, 15, 0.95); border: 1px solid var(--primary, #00f0ff); backdrop-filter: blur(10px);"></ul>
+          <!-- Menu déroulant des suggestions (propre, sans nexus-panel) -->
+          <ul id="searchSuggestions" style="display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 999; max-height: 220px; overflow-y: auto; list-style: none; margin: 0; padding: 4px 0; background: #050b14; border: 1px solid var(--primary, #00f0ff); border-radius: var(--card-radius, 4px); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 10px rgba(0, 240, 255, 0.2);"></ul>
         </div>
 
         <button type="submit" class="cyber-btn" aria-label="Lancer la recherche" style="height: 42px; width: 45px; justify-content: center;">
@@ -83,7 +83,7 @@
 
   <!-- Badge Version -->
   <div class="version-tag" style="position: fixed; bottom: 15px; left: 20px; font-family: var(--font-title, 'Orbitron', monospace); font-size: 0.75rem; color: var(--primary, #00f0ff); opacity: 0.7; letter-spacing: 1px; pointer-events: none; z-index: 90; text-shadow: 0 0 5px var(--primary, #00f0ff);">
-    v0.1.2
+    v0.1.3
   </div>
 
   <!-- Bouton Paramètres -->
