@@ -1,82 +1,52 @@
+/* ==========================================================================
+   AUDIO SYSTEM (Web Audio API)
+   ========================================================================== */
+
 let audioCtx = null;
-let noiseNode = null;
-let isAudioPlaying = false;
 
-export function playUiSound(freq, duration) {
-  const enabled = document.getElementById('soundFxToggle')?.checked;
-  if (!enabled) return;
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+}
 
+export function playSound(type = 'click') {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(0.05, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
 
     osc.connect(gain);
     gain.connect(ctx.destination);
 
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  } catch (e) {}
-}
+    const now = ctx.currentTime;
 
-export function initAudioGenerator() {
-  const btn = document.getElementById('audioToggleBtn');
-  const label = document.getElementById('audioLabel');
-
-  btn?.addEventListener('click', () => {
-    if (!isAudioPlaying) {
-      startAmbientAudio();
-      btn.classList.add('active');
-      if (label) label.textContent = 'On';
-      isAudioPlaying = true;
-    } else {
-      stopAmbientAudio();
-      btn.classList.remove('active');
-      if (label) label.textContent = 'Off';
-      isAudioPlaying = false;
+    if (type === 'click') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } else if (type === 'hover') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1200, now);
+      gain.gain.setValueAtTime(0.02, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.03);
+      osc.start(now);
+      osc.stop(now + 0.03);
     }
-  });
-}
-
-function startAmbientAudio() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const bufferSize = audioCtx.sampleRate * 2;
-  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
-  }
-
-  noiseNode = audioCtx.createBufferSource();
-  noiseNode.buffer = buffer;
-  noiseNode.loop = true;
-
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(600, audioCtx.currentTime);
-
-  const gain = audioCtx.createGain();
-  gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-
-  noiseNode.connect(filter);
-  filter.connect(gain);
-  gain.connect(audioCtx.destination);
-
-  noiseNode.start();
-}
-
-function stopAmbientAudio() {
-  if (noiseNode) {
-    noiseNode.stop();
-    noiseNode.disconnect();
-  }
-  if (audioCtx) {
-    audioCtx.close();
+  } catch (err) {
+    // Ignoré si le navigateur restreint l'audio
   }
 }
