@@ -1,107 +1,139 @@
 /* ==========================================================================
-   COMPONENTS (Nexus Cyberpunk Dashboard)
+   COMPONENTS
    ========================================================================== */
 
-/* Panneaux Cyberpunk */
+/* Panels */
 .nexus-panel {
   position: relative;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--card-radius);
+  background: var(--panel-bg, rgba(5, 12, 22, 0.75));
+  border: 1px solid var(--panel-border, rgba(0, 240, 255, 0.25));
+  border-radius: var(--card-radius, 8px);
   padding: 16px;
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast, 0.2s ease), border-radius var(--transition-fast, 0.2s ease);
 }
 
-/* En-tête SYS_ONLINE unique sur les boîtes principales uniquement */
+/* Pseudo-élément SYS_ONLINE isolé sur le 1er niveau uniquement */
 .app-container > .nexus-panel::before {
   content: '// SYS_ONLINE';
   position: absolute;
   top: -9px;
   right: 15px;
-  font-family: var(--font-title);
+  font-family: var(--font-title, 'Orbitron', sans-serif);
   font-size: 0.62rem;
-  color: var(--primary);
-  background: var(--bg-dark);
+  color: var(--primary, #00f0ff);
+  background: var(--bg-dark, #030509);
   padding: 0 6px;
   letter-spacing: 1.5px;
   opacity: 0.85;
   pointer-events: none;
 }
 
-/* Boutons Cyberpunk */
+/* Buttons */
 .cyber-btn {
   background: rgba(4, 10, 18, 0.85);
-  border: 1px solid var(--panel-border);
-  color: var(--text-main);
-  font-family: var(--font-body);
+  border: 1px solid var(--panel-border, rgba(0, 240, 255, 0.25));
+  color: var(--text-main, #e0f7fc);
+  font-family: var(--font-body, 'Rajdhani', sans-serif);
   font-size: 0.9rem;
   font-weight: 600;
   padding: 8px 14px;
-  border-radius: var(--card-radius);
+  border-radius: var(--card-radius, 8px);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-fast, 0.2s ease);
   outline: none;
   height: 40px;
-  box-sizing: border-box;
 }
 
 .cyber-btn:hover {
-  border-color: var(--primary);
-  box-shadow: 0 0 10px var(--primary-glow);
-  color: #fff;
+  border-color: var(--primary, #00f0ff);
+  box-shadow: 0 0 10px var(--primary-glow, rgba(0, 240, 255, 0.4));
+  color: #ffffff;
 }
 
 .cyber-btn.active {
-  background: var(--primary);
-  color: #000;
-  border-color: var(--primary);
-  box-shadow: 0 0 12px var(--primary-glow);
+  background: var(--primary, #00f0ff);
+  color: #000000;
+  border-color: var(--primary, #00f0ff);
+  box-shadow: 0 0 12px var(--primary-glow, rgba(0, 240, 255, 0.4));
   font-weight: 700;
 }
 
-/* Input de Recherche FIX (Fond sombre & aucun style natif blanc) */
-#searchForm input[type="text"],
-#searchInput {
-  width: 100% !important;
-  height: 40px !important;
-  background: rgba(3, 7, 13, 0.9) !important;
-  border: 1px solid var(--panel-border) !important;
-  border-radius: var(--card-radius) !important;
-  color: var(--text-main) !important;
-  padding: 0 12px !important;
-  font-family: var(--font-body) !important;
-  font-size: 0.95rem !important;
-  outline: none !important;
-  box-sizing: border-box !important;
-  transition: all var(--transition-fast) !important;
+.cyber-btn-icon {
+  width: 40px;
+  padding: 0;
+  flex-shrink: 0;
 }
 
-#searchInput:focus {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 10px var(--primary-glow) !important;
+.cyber-btn-icon i {
+  color: var(--primary, #00f0ff);
+}
+
+.danger-btn {
+  border-color: var(--secondary, #ff0055);
+  color: var(--secondary, #ff0055);
+}
+
+.danger-btn:hover {
+  border-color: var(--secondary, #ff0055);
+  box-shadow: 0 0 10px rgba(ff, 0, 85, 0.4);
+}
+
+/* Form inputs & controls */
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+#searchInput,
+.cyber-input {
+  width: 100%;
+  height: 40px;
+  background: rgba(3, 7, 13, 0.9);
+  border: 1px solid var(--panel-border, rgba(0, 240, 255, 0.25));
+  border-radius: var(--card-radius, 8px);
+  color: var(--text-main, #e0f7fc);
+  padding: 0 12px;
+  font-family: var(--font-body, 'Rajdhani', sans-serif);
+  font-size: 0.95rem;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color var(--transition-fast, 0.2s ease), box-shadow var(--transition-fast, 0.2s ease);
+}
+
+#searchInput:focus,
+.cyber-input:focus {
+  border-color: var(--primary, #00f0ff);
+  box-shadow: 0 0 10px var(--primary-glow, rgba(0, 240, 255, 0.4));
 }
 
 #searchInput::placeholder {
-  color: var(--text-muted);
+  color: var(--text-muted, #7293a6);
   opacity: 0.7;
 }
 
-/* Sélecteur Moteur de recherche */
-#engineSelector {
+#engineSelector,
+.cyber-select {
   height: 40px;
-  background: rgba(3, 7, 13, 0.95) !important;
-  border: 1px solid var(--panel-border);
-  color: var(--primary);
-  font-family: var(--font-body);
+  background: rgba(3, 7, 13, 0.95);
+  border: 1px solid var(--panel-border, rgba(0, 240, 255, 0.25));
+  color: var(--primary, #00f0ff);
+  font-family: var(--font-body, 'Rajdhani', sans-serif);
   font-weight: 700;
   padding: 0 8px;
-  border-radius: var(--card-radius);
+  border-radius: var(--card-radius, 8px);
   cursor: pointer;
   outline: none;
 }
@@ -115,19 +147,19 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 1100;
   max-height: 200px;
   overflow-y: auto;
-  background: #040810;
-  border: 1px solid var(--primary);
-  border-radius: var(--card-radius);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 10px var(--primary-glow);
+  background: rgba(4, 8, 16, 0.95);
+  border: 1px solid var(--primary, #00f0ff);
+  border-radius: var(--card-radius, 8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 10px var(--primary-glow, rgba(0, 240, 255, 0.4));
 }
 
 #searchSuggestions li {
   padding: 8px 12px;
   cursor: pointer;
-  color: var(--text-main);
+  color: var(--text-main, #e0f7fc);
   font-size: 0.88rem;
   display: flex;
   align-items: center;
@@ -137,10 +169,25 @@
 
 #searchSuggestions li:hover {
   background: rgba(0, 240, 255, 0.15);
-  color: var(--primary);
+  color: var(--primary, #00f0ff);
 }
 
 /* Grille des Favoris */
+.favorites-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-filters,
+.action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
 .favorites-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -153,10 +200,17 @@
   }
 }
 
+@media (max-width: 320px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .fav-card {
+  position: relative;
   background: rgba(4, 10, 18, 0.6);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--card-radius);
+  border: 1px solid var(--panel-border, rgba(0, 240, 255, 0.25));
+  border-radius: var(--card-radius, 8px);
   padding: 14px 8px;
   display: flex;
   flex-direction: column;
@@ -164,13 +218,13 @@
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  color: var(--text-main);
-  transition: all var(--transition-fast);
+  color: var(--text-main, #e0f7fc);
+  transition: all var(--transition-fast, 0.2s ease);
 }
 
 .fav-card:hover {
-  border-color: var(--primary);
-  box-shadow: 0 0 12px var(--primary-glow);
+  border-color: var(--primary, #00f0ff);
+  box-shadow: 0 0 12px var(--primary-glow, rgba(0, 240, 255, 0.4));
   transform: translateY(-2px);
   background: rgba(0, 240, 255, 0.05);
 }
@@ -182,8 +236,25 @@
 }
 
 .fav-card span {
-  font-family: var(--font-title);
+  font-family: var(--font-title, 'Orbitron', sans-serif);
   font-size: 0.7rem;
   letter-spacing: 0.5px;
   text-align: center;
+}
+
+.fav-delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--secondary, #ff0055);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
