@@ -1,77 +1,21 @@
-/* Boutons Cyberpunk */
-.cyber-btn {
-  background: rgba(4, 10, 18, 0.85);
-  border: 1px solid var(--panel-border);
-  color: var(--text-main);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding: 8px 14px;
-  border-radius: var(--card-radius);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all var(--transition-fast);
-  outline: none;
-  backdrop-filter: blur(8px);
-}
+/* ==========================================================================
+   COMPONENTS (Nexus Cyberpunk Dashboard)
+   ========================================================================== */
 
-.cyber-btn:hover {
-  border-color: var(--primary);
-  box-shadow: 0 0 12px var(--primary-glow);
-  color: #fff;
-  transform: translateY(-1px);
-}
-
-.cyber-btn.active {
-  background: var(--primary);
-  color: #000;
-  border-color: var(--primary);
-  box-shadow: 0 0 15px var(--primary-glow);
-  font-weight: 700;
-}
-
-.cyber-btn.icon-only {
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  justify-content: center;
-}
-
-/* Formulaires & Inputs */
-.cyber-input {
-  width: 100%;
-  height: 42px;
-  background: rgba(3, 7, 13, 0.9);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--card-radius);
-  color: var(--text-main);
-  padding: 0 14px;
-  font-family: var(--font-body);
-  font-size: 1rem;
-  transition: all var(--transition-fast);
-  outline: none;
-}
-
-.cyber-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 12px var(--primary-glow);
-}
-
-/* Panneaux HUD */
+/* Panneaux Cyberpunk */
 .nexus-panel {
   position: relative;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: var(--card-radius);
-  padding: 20px;
+  padding: 16px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.03);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   transition: border-color var(--transition-fast);
 }
 
-.nexus-panel::before {
+/* En-tête SYS_ONLINE unique sur les boîtes principales uniquement */
+.app-container > .nexus-panel::before {
   content: '// SYS_ONLINE';
   position: absolute;
   top: -9px;
@@ -82,128 +26,143 @@
   background: var(--bg-dark);
   padding: 0 6px;
   letter-spacing: 1.5px;
-  opacity: 0.8;
+  opacity: 0.85;
+  pointer-events: none;
 }
 
-/* En-tête HUD & Horloge */
-.hud-header {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+/* Boutons Cyberpunk */
+.cyber-btn {
+  background: rgba(4, 10, 18, 0.85);
+  border: 1px solid var(--panel-border);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  outline: none;
+  height: 40px;
+  box-sizing: border-box;
 }
 
-.glow-text {
-  font-family: var(--font-title);
-  font-size: 2.6rem;
-  font-weight: 900;
-  color: var(--primary);
-  text-shadow: 0 0 15px var(--primary-glow);
-  letter-spacing: 3px;
+.cyber-btn:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+  color: #fff;
 }
 
-.date-text {
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2px;
-}
-
-/* Moteur de Recherche */
-.search-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-}
-
-.engine-selector-wrapper select {
-  height: 42px;
-  background: rgba(3, 7, 13, 0.95);
-  color: var(--primary);
-  border-color: var(--panel-border);
-  cursor: pointer;
+.cyber-btn.active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
   font-weight: 700;
 }
 
-.input-container {
-  position: relative;
-  flex: 1;
+/* Input de Recherche FIX (Fond sombre & aucun style natif blanc) */
+#searchForm input[type="text"],
+#searchInput {
+  width: 100% !important;
+  height: 40px !important;
+  background: rgba(3, 7, 13, 0.9) !important;
+  border: 1px solid var(--panel-border) !important;
+  border-radius: var(--card-radius) !important;
+  color: var(--text-main) !important;
+  padding: 0 12px !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.95rem !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  transition: all var(--transition-fast) !important;
 }
 
-/* Autocomplétion Dropdown */
-.suggestions-dropdown {
-  display: none;
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  z-index: 999;
-  max-height: 220px;
-  overflow-y: auto;
+#searchInput:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 10px var(--primary-glow) !important;
+}
+
+#searchInput::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Sélecteur Moteur de recherche */
+#engineSelector {
+  height: 40px;
+  background: rgba(3, 7, 13, 0.95) !important;
+  border: 1px solid var(--panel-border);
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-weight: 700;
+  padding: 0 8px;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  outline: none;
+}
+
+/* Dropdown des suggestions */
+#searchSuggestions {
   list-style: none;
   margin: 0;
   padding: 4px 0;
-  background: rgba(4, 8, 16, 0.98);
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #040810;
   border: 1px solid var(--primary);
   border-radius: var(--card-radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px var(--primary-glow);
-  backdrop-filter: blur(15px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 10px var(--primary-glow);
 }
 
-.suggestions-dropdown li {
-  padding: 10px 14px;
+#searchSuggestions li {
+  padding: 8px 12px;
   cursor: pointer;
   color: var(--text-main);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: all 0.15s;
+  gap: 8px;
+  transition: background 0.15s, color 0.15s;
 }
 
-.suggestions-dropdown li:hover {
-  background: var(--primary-glow);
-  color: #fff;
-  padding-left: 18px;
+#searchSuggestions li:hover {
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--primary);
 }
 
 /* Grille des Favoris */
-.fav-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.category-filters, .fav-actions {
-  display: flex;
-  gap: 8px;
-}
-
 .favorites-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .favorites-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .fav-card {
-  position: relative;
   background: rgba(4, 10, 18, 0.6);
   border: 1px solid var(--panel-border);
   border-radius: var(--card-radius);
-  padding: 16px 10px;
+  padding: 14px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   text-decoration: none;
   color: var(--text-main);
   transition: all var(--transition-fast);
@@ -211,49 +170,20 @@
 
 .fav-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 0 15px var(--primary-glow);
-  transform: translateY(-3px);
+  box-shadow: 0 0 12px var(--primary-glow);
+  transform: translateY(-2px);
   background: rgba(0, 240, 255, 0.05);
 }
 
 .fav-card img {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
 
 .fav-card span {
   font-family: var(--font-title);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   letter-spacing: 0.5px;
   text-align: center;
-}
-
-/* Style Bouton Paramètres flottant & Version */
-.version-tag {
-  position: fixed;
-  bottom: 15px;
-  left: 20px;
-  font-family: var(--font-title);
-  font-size: 0.75rem;
-  color: var(--primary);
-  opacity: 0.7;
-  letter-spacing: 1px;
-  pointer-events: none;
-  z-index: 90;
-  text-shadow: 0 0 5px var(--primary-glow);
-}
-
-.floating-settings-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  border-radius: 50% !important;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  justify-content: center;
-  z-index: 100;
-  font-size: 1.2rem;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
