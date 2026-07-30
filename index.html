@@ -24,17 +24,17 @@
 
     <!-- En-tête Horloge & Météo -->
     <header class="nexus-panel">
-      <div id="clockWidget" class="clock-container" style="text-align: center;">
-        <div id="clockDisplay" style="font-family: var(--font-title); font-size: 2.2rem; font-weight: 700; color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); letter-spacing: 2px;">00:00:00</div>
-        <div id="dateDisplay" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; text-transform: capitalize;">---</div>
+      <div id="clockWidget" class="clock-container">
+        <div id="clockDisplay" class="clock-display">00:00:00</div>
+        <div id="dateDisplay" class="date-display">---</div>
       </div>
       <div id="weatherWidget" class="weather-container"></div>
     </header>
 
     <!-- Moteur de Recherche -->
     <section class="nexus-panel">
-      <form id="searchForm" autocomplete="off" style="display: flex; align-items: center; gap: 8px;">
-        <select id="engineSelector" class="cyber-btn">
+      <form id="searchForm" autocomplete="off" class="search-form">
+        <select id="engineSelector" class="cyber-btn" aria-label="Moteur de recherche">
           <option value="google">Google</option>
           <option value="duckduckgo">DuckDuckGo</option>
           <option value="youtube">YouTube</option>
@@ -43,30 +43,30 @@
           <option value="chatgpt">ChatGPT</option>
         </select>
 
-        <div style="position: relative; flex: 1;">
-          <input type="text" id="searchInput" placeholder="Rechercher ou préfixe (g/, yt/, gh/)..." autocomplete="off">
-          <ul id="searchSuggestions" style="display: none;"></ul>
+        <div class="search-input-wrapper">
+          <input type="text" id="searchInput" placeholder="Rechercher ou préfixe (g/, yt/, gh/)..." autocomplete="off" aria-label="Champ de recherche">
+          <ul id="searchSuggestions"></ul>
         </div>
 
-        <button type="submit" class="cyber-btn" aria-label="Rechercher" style="width: 40px; padding: 0;">
-          <i class="fa-solid fa-bolt" style="color: var(--primary);"></i>
+        <button type="submit" class="cyber-btn cyber-btn-icon" aria-label="Rechercher">
+          <i class="fa-solid fa-bolt"></i>
         </button>
       </form>
     </section>
 
     <!-- Favoris -->
     <section class="nexus-panel">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <div style="display: flex; gap: 6px;" id="categoryFilters">
+      <div class="favorites-header">
+        <div id="categoryFilters" class="category-filters">
           <button class="cyber-btn cat-btn active" data-cat="all">Tous</button>
           <button class="cyber-btn cat-btn" data-cat="dev">Dev</button>
           <button class="cyber-btn cat-btn" data-cat="media">Médias</button>
           <button class="cyber-btn cat-btn" data-cat="loisirs">Loisirs</button>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <button id="toggleEditFavs" class="cyber-btn" style="width: 36px; height: 36px; padding: 0;" aria-label="Mode Édition"><i class="fa-solid fa-pen"></i></button>
-          <button id="addFavBtn" class="cyber-btn" style="width: 36px; height: 36px; padding: 0;" aria-label="Ajouter un favori"><i class="fa-solid fa-plus"></i></button>
+        <div class="action-buttons">
+          <button id="toggleEditFavs" class="cyber-btn cyber-btn-icon" aria-label="Mode Édition"><i class="fa-solid fa-pen"></i></button>
+          <button id="addFavBtn" class="cyber-btn cyber-btn-icon" aria-label="Ajouter un favori"><i class="fa-solid fa-plus"></i></button>
         </div>
       </div>
 
@@ -76,40 +76,40 @@
   </div>
 
   <!-- Badge Version -->
-  <div class="version-tag" style="position: fixed; bottom: 15px; left: 20px; font-family: var(--font-title); font-size: 0.75rem; color: var(--primary); opacity: 0.7; pointer-events: none; z-index: 90;">
+  <div class="version-tag">
     v0.2.0
   </div>
 
   <!-- Bouton Paramètres -->
-  <button id="openSettingsBtn" class="cyber-btn" aria-label="Paramètres" style="position: fixed; bottom: 20px; right: 20px; border-radius: 50%; width: 44px; height: 44px; padding: 0; z-index: 100;">
-    <i class="fa-solid fa-gear" style="font-size: 1.1rem;"></i>
+  <button id="openSettingsBtn" class="cyber-btn settings-toggle-btn" aria-label="Paramètres">
+    <i class="fa-solid fa-gear"></i>
   </button>
 
   <!-- MODAL : Ajout Favori -->
   <div id="addFavModal" class="modal-overlay">
     <div class="modal-container">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h4 style="font-family: var(--font-title); color: var(--primary); margin: 0;">NOUVEAU FAVORI</h4>
-        <button id="closeAddFavBtn" class="cyber-btn" style="width: 32px; height: 32px; padding: 0;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <h4>NOUVEAU FAVORI</h4>
+        <button id="closeAddFavBtn" class="cyber-btn close-modal" aria-label="Fermer la fenêtre"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <form id="favForm" style="display: flex; flex-direction: column; gap: 12px;">
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted);" for="favNameInput">Nom du site</label>
-          <input type="text" id="favNameInput" class="cyber-btn" style="width: 100%; text-align: left;" required>
+      <form id="favForm" class="modal-form">
+        <div class="form-group">
+          <label for="favNameInput">Nom du site</label>
+          <input type="text" id="favNameInput" class="cyber-input" required>
         </div>
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted);" for="favUrlInput">URL du site</label>
-          <input type="url" id="favUrlInput" class="cyber-btn" style="width: 100%; text-align: left;" placeholder="https://" required>
+        <div class="form-group">
+          <label for="favUrlInput">URL du site</label>
+          <input type="url" id="favUrlInput" class="cyber-input" placeholder="https://" required>
         </div>
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted);" for="favCategoryInput">Catégorie</label>
-          <select id="favCategoryInput" class="cyber-btn" style="width: 100%; background: #000;">
+        <div class="form-group">
+          <label for="favCategoryInput">Catégorie</label>
+          <select id="favCategoryInput" class="cyber-select">
             <option value="dev">Dev</option>
             <option value="media">Médias</option>
             <option value="loisirs">Loisirs</option>
           </select>
         </div>
-        <button type="submit" class="cyber-btn" style="width: 100%; margin-top: 8px;">Enregistrer</button>
+        <button type="submit" class="cyber-btn submit-btn">Enregistrer</button>
       </form>
     </div>
   </div>
@@ -117,58 +117,58 @@
   <!-- MODAL : Paramètres -->
   <div id="settingsModal" class="modal-overlay">
     <div class="modal-container">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h4 style="font-family: var(--font-title); color: var(--primary); margin: 0;">PARAMÈTRES SYSTÈME</h4>
-        <button id="closeSettingsBtn" class="cyber-btn" style="width: 32px; height: 32px; padding: 0;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <h4>PARAMÈTRES SYSTÈME</h4>
+        <button id="closeSettingsBtn" class="cyber-btn close-modal" aria-label="Fermer la fenêtre"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted);">Couleur Néon</label>
-          <div style="display: flex; gap: 8px; margin-top: 6px;">
-            <button type="button" class="color-dot" data-hue="185" style="background: #00f0ff;" aria-label="Cyan"></button>
-            <button type="button" class="color-dot" data-hue="340" style="background: #ff0055;" aria-label="Rose"></button>
-            <button type="button" class="color-dot" data-hue="270" style="background: #7000ff;" aria-label="Violet"></button>
-            <button type="button" class="color-dot" data-hue="140" style="background: #00ff66;" aria-label="Vert"></button>
-            <button type="button" class="color-dot" data-hue="45"  style="background: #ffb700;" aria-label="Orange"></button>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Couleur Néon</label>
+          <div class="color-picker-grid">
+            <button type="button" class="color-dot color-dot-cyan" data-hue="185" aria-label="Cyan"></button>
+            <button type="button" class="color-dot color-dot-pink" data-hue="340" aria-label="Rose"></button>
+            <button type="button" class="color-dot color-dot-purple" data-hue="270" aria-label="Violet"></button>
+            <button type="button" class="color-dot color-dot-green" data-hue="140" aria-label="Vert"></button>
+            <button type="button" class="color-dot color-dot-orange" data-hue="45" aria-label="Orange"></button>
           </div>
         </div>
 
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted);" for="bgTypeSelect">Style de Fond</label>
-          <select id="bgTypeSelect" class="cyber-btn" style="width: 100%; background: #000; margin-top: 4px;">
+        <div class="form-group">
+          <label for="bgTypeSelect">Style de Fond</label>
+          <select id="bgTypeSelect" class="cyber-select">
             <option value="particles">Particules Interactives</option>
             <option value="color">Couleur Unie</option>
             <option value="image">Image Personnalisée</option>
           </select>
         </div>
 
-        <div id="bgColorGroup" style="display: none;">
-          <label style="font-size: 0.8rem; color: var(--text-muted);" for="bgColorInput">Couleur de Fond</label>
-          <input type="color" id="bgColorInput" value="#030509" style="width: 100%; height: 35px; border: none; cursor: pointer; margin-top: 4px;">
+        <div id="bgColorGroup" class="form-group hidden">
+          <label for="bgColorInput">Couleur de Fond</label>
+          <input type="color" id="bgColorInput" value="#030509" class="color-input">
         </div>
 
-        <div id="bgUrlGroup" style="display: none;">
-          <label style="font-size: 0.8rem; color: var(--text-muted);" for="bgUrlInput">Lien d'image (URL)</label>
-          <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-btn" style="width: 100%; margin-top: 4px;">
+        <div id="bgUrlGroup" class="form-group hidden">
+          <label for="bgUrlInput">Lien d'image (URL)</label>
+          <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-input">
         </div>
 
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted);">Arrondi des Cartes</label>
-          <div style="display: flex; gap: 6px; margin-top: 4px;">
-            <button type="button" class="cyber-btn radius-btn" data-radius="0px" style="flex: 1;">Brut</button>
-            <button type="button" class="cyber-btn radius-btn" data-radius="4px" style="flex: 1;">Cyber</button>
-            <button type="button" class="cyber-btn radius-btn" data-radius="14px" style="flex: 1;">Lisse</button>
+        <div class="form-group">
+          <label>Arrondi des Cartes</label>
+          <div class="radius-selector-grid">
+            <button type="button" class="cyber-btn radius-btn" data-radius="0px">Brut</button>
+            <button type="button" class="cyber-btn radius-btn" data-radius="4px">Cyber</button>
+            <button type="button" class="cyber-btn radius-btn" data-radius="14px">Lisse</button>
           </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label style="font-size: 0.85rem; color: var(--text-main);" for="scanlinesToggle">Filtre CRT Scanlines</label>
-          <input type="checkbox" id="scanlinesToggle" checked style="accent-color: var(--primary);">
+        <div class="form-group inline-setting">
+          <label for="scanlinesToggle">Filtre CRT Scanlines</label>
+          <input type="checkbox" id="scanlinesToggle" checked class="cyber-checkbox">
         </div>
 
-        <div style="text-align: right; margin-top: 10px;">
-          <button id="resetSettingsBtn" class="cyber-btn" style="border-color: var(--secondary); color: var(--secondary);">Réinitialiser</button>
+        <div class="form-actions">
+          <button id="resetSettingsBtn" class="cyber-btn danger-btn">Réinitialiser</button>
         </div>
       </div>
     </div>
