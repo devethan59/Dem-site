@@ -1,129 +1,177 @@
+/* ==========================================================================
+   FAVORITES MANAGEMENT (Sécurisé XSS)
+   ========================================================================== */
+
+import { playSound } from './audio.js';
+
 const DEFAULT_FAVORITES = [
-  { id: 1, title: 'Google', url: 'https://google.com', category: 'dev' },
-  { id: 2, title: 'YouTube', url: 'https://youtube.com', category: 'media' },
-  { id: 3, title: 'GitHub', url: 'https://github.com', category: 'dev' }
+  { id: '1', name: 'Google', url: 'https://google.com', category: 'dev', icon: 'https://www.google.com/favicon.ico' },
+  { id: '2', name: 'YouTube', url: 'https://youtube.com', category: 'media', icon: 'https://www.youtube.com/favicon.ico' },
+  { id: '3', name: 'GitHub', url: 'https://github.com', category: 'dev', icon: 'https://github.githubassets.com/favicons/favicon.png' },
+  { id: '4', name: 'WordReference', url: 'https://wordreference.com', category: 'loisirs', icon: 'https://www.wordreference.com/favicon.ico' }
 ];
 
-let favorites = JSON.parse(localStorage.getItem('nexus_favs')) || DEFAULT_FAVORITES;
+let favorites = [];
 let currentCategory = 'all';
-let isEditMode = false;
+let editMode = false;
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function loadFavorites() {
+  try {
+    const stored = localStorage.getItem('nexus_favorites');
+    favorites = stored ? JSON.parse(stored) : DEFAULT_FAVORITES;
+  } catch (e) {
+    favorites = DEFAULT_FAVORITES;
+  }
+}
+
+function saveFavorites() {
+  try {
+    localStorage.setItem('nexus_favorites', JSON.stringify(favorites));
+  } catch (e) {
+    console.warn('Impossible de sauvegarder les favoris:', e);
+  }
+}
 
 export function initFavorites() {
+  loadFavorites();
   renderFavorites();
-  bindEvents();
-}
 
-export function renderFavorites() {
-  const container = document.getElementById('favoritesGrid');
-  if (!container) return;
+  const categoryContainer = document.getElementById('categoryFilters');
+  if (categoryContainer) {
+    categoryContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cat-btn');
+      if (!btn) return;
 
-  const filtered = currentCategory === 'all' 
-    ? favorites 
-    : favorites.filter(fav => fav.category === currentCategory);
+      playSound('click');
+      categoryContainer.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <p style="color: var(--text-muted, #888); text-align: center; grid-column: 1/-1; padding: 20px;">
-        Aucun favori enregistré.
-      </p>`;
-    return;
-  }
-
-  container.innerHTML = filtered.map(fav => {
-    // Correctif pour UNDEFINED : prend fav.title ou fav.name
-    const displayTitle = fav.title || fav.name || 'Favori';
-    const domain = getDomainFromUrl(fav.url);
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-
-    return `
-      <div class="fav-card ${isEditMode ? 'edit-mode' : ''}" style="position: relative;">
-        ${isEditMode ? `
-          <button class="delete-fav-btn" data-id="${fav.id}" aria-label="Supprimer ${displayTitle}" style="position: absolute; top: -6px; right: -6px; background: var(--secondary, #ff0055); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        ` : ''}
-        <a href="${fav.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-          <div class="fav-icon-wrapper" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-            <img src="${faviconUrl}" alt="${displayTitle}" onerror="this.onerror=null; this.src='https://favicone.com/${domain}?size=64';" style="width: 24px; height: 24px; border-radius: 4px; object-fit: contain;">
-          </div>
-          <span class="fav-title" style="font-size: 0.85rem; text-align: center; font-weight: 500;">${displayTitle}</span>
-        </a>
-      </div>
-    `;
-  }).join('');
-}
-
-function getDomainFromUrl(url) {
-  try {
-    const parsed = new URL(url);
-    return parsed.hostname;
-  } catch {
-    return url;
-  }
-}
-
-function bindEvents() {
-  const container = document.getElementById('favoritesGrid');
-  
-  if (container) {
-    container.addEventListener('click', (e) => {
-      const deleteBtn = e.target.closest('.delete-fav-btn');
-      if (deleteBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = parseInt(deleteBtn.dataset.id, 10);
-        favorites = favorites.filter(fav => fav.id !== id);
-        localStorage.setItem('nexus_favs', JSON.stringify(favorites));
-        renderFavorites();
-      }
-    });
-  }
-
-  document.querySelectorAll('#categoryFilters .cat-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('#categoryFilters .cat-btn').forEach(b => b.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      currentCategory = e.currentTarget.dataset.cat;
-      renderFavorites();
-    });
-  });
-
-  const editBtn = document.getElementById('toggleEditFavs');
-  if (editBtn) {
-    editBtn.addEventListener('click', () => {
-      isEditMode = !isEditMode;
-      editBtn.classList.toggle('active', isEditMode);
+      currentCategory = btn.dataset.cat || 'all';
       renderFavorites();
     });
   }
 
-  const addBtn = document.getElementById('addFavBtn');
-  const closeBtn = document.getElementById('closeAddFavBtn');
-  const modal = document.getElementById('addFavModal');
-  const form = document.getElementById('favForm');
+  const toggleEditBtn = document.getElementById('toggleEditFavs');
+  if (toggleEditBtn) {
+    toggleEditBtn.addEventListener('click', () => {
+      playSound('click');
+      editMode = !editMode;
+      toggleEditBtn.classList.toggle('active', editMode);
+      renderFavorites();
+    });
+  }
 
-  if (addBtn && modal) addBtn.addEventListener('click', () => modal.classList.add('active'));
-  if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+  const addFavBtn = document.getElementById('addFavBtn');
+  const addModal = document.getElementById('addFavModal');
+  const closeAddBtn = document.getElementById('closeAddFavBtn');
+  const favForm = document.getElementById('favForm');
 
-  if (form) {
-    form.addEventListener('submit', (e) => {
+  if (addFavBtn && addModal) {
+    addFavBtn.addEventListener('click', () => {
+      playSound('click');
+      addModal.classList.add('active');
+    });
+  }
+
+  if (closeAddBtn && addModal) {
+    closeAddBtn.addEventListener('click', () => {
+      playSound('click');
+      addModal.classList.remove('active');
+    });
+  }
+
+  if (favForm) {
+    favForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const title = document.getElementById('favNameInput')?.value.trim();
+      playSound('click');
+
+      const name = document.getElementById('favNameInput')?.value.trim();
       let url = document.getElementById('favUrlInput')?.value.trim();
       const category = document.getElementById('favCategoryInput')?.value || 'dev';
 
-      if (!title || !url) return;
+      if (!name || !url) return;
 
       if (!/^https?:\/\//i.test(url)) {
         url = 'https://' + url;
       }
 
-      favorites.push({ id: Date.now(), title, name: title, url, category });
-      localStorage.setItem('nexus_favs', JSON.stringify(favorites));
+      let icon = '';
+      try {
+        const parsed = new URL(url);
+        icon = `${parsed.origin}/favicon.ico`;
+      } catch (err) {
+        icon = '';
+      }
 
-      form.reset();
-      if (modal) modal.classList.remove('active');
+      favorites.push({
+        id: Date.now().toString(),
+        name,
+        url,
+        category,
+        icon
+      });
+
+      saveFavorites();
       renderFavorites();
+
+      favForm.reset();
+      addModal?.classList.remove('active');
     });
   }
+}
+
+function renderFavorites() {
+  const grid = document.getElementById('favoritesGrid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  const filtered = currentCategory === 'all'
+    ? favorites
+    : favorites.filter(f => f.category === currentCategory);
+
+  filtered.forEach(fav => {
+    const card = document.createElement('a');
+    card.className = 'fav-card';
+    card.href = fav.url;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+
+    card.addEventListener('mouseenter', () => playSound('hover'));
+
+    const safeName = escapeHTML(fav.name);
+    const safeIcon = escapeHTML(fav.icon);
+
+    card.innerHTML = `
+      <img src="${safeIcon}" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>'">
+      <span>${safeName}</span>
+    `;
+
+    if (editMode) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'fav-delete-btn';
+      delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      delBtn.ariaLabel = `Supprimer ${safeName}`;
+      delBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        playSound('click');
+        favorites = favorites.filter(f => f.id !== fav.id);
+        saveFavorites();
+        renderFavorites();
+      });
+      card.appendChild(delBtn);
+    }
+
+    grid.appendChild(card);
+  });
 }
