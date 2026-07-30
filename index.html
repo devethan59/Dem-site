@@ -28,7 +28,15 @@
         <div id="clockDisplay" class="clock-display">00:00:00</div>
         <div id="dateDisplay" class="date-display">---</div>
       </div>
-      <div id="weatherWidget" class="weather-container"></div>
+      
+      <!-- Widget Météo avec choix de ville -->
+      <div id="weatherWidget" class="weather-container">
+        <div class="weather-city-wrapper">
+          <span id="weatherCityName">Elne</span>
+          <button id="editCityBtn" class="icon-btn-inline" aria-label="Changer de ville"><i class="fa-solid fa-pen"></i></button>
+        </div>
+        <div id="weatherInfo">--°C</div>
+      </div>
     </header>
 
     <!-- Moteur de Recherche -->
@@ -45,7 +53,7 @@
 
         <div class="search-input-wrapper">
           <input type="text" id="searchInput" placeholder="Rechercher ou préfixe (g/, yt/, gh/)..." autocomplete="off" aria-label="Champ de recherche">
-          <ul id="searchSuggestions"></ul>
+          <ul id="searchSuggestions" class="suggestions-list hidden"></ul>
         </div>
 
         <button type="submit" class="cyber-btn cyber-btn-icon" aria-label="Rechercher">
@@ -73,6 +81,18 @@
       <div id="favoritesGrid" class="favorites-grid"></div>
     </section>
 
+    <!-- Section ToDo List -->
+    <section class="nexus-panel">
+      <div class="todo-header">
+        <h3 class="panel-title"><i class="fa-solid fa-list-check"></i> TÂCHES</h3>
+      </div>
+      <form id="todoForm" class="todo-form">
+        <input type="text" id="todoInput" placeholder="Nouvelle tâche..." class="cyber-input">
+        <button type="submit" class="cyber-btn cyber-btn-icon"><i class="fa-solid fa-plus"></i></button>
+      </form>
+      <ul id="todoList" class="todo-list"></ul>
+    </section>
+
   </div>
 
   <!-- Badge Version -->
@@ -90,7 +110,7 @@
     <div class="modal-container">
       <div class="modal-header">
         <h4>NOUVEAU FAVORI</h4>
-        <button id="closeAddFavBtn" class="cyber-btn close-modal" aria-label="Fermer la fenêtre"><i class="fa-solid fa-xmark"></i></button>
+        <button id="closeAddFavBtn" class="cyber-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="favForm" class="modal-form">
         <div class="form-group">
@@ -119,7 +139,7 @@
     <div class="modal-container">
       <div class="modal-header">
         <h4>PARAMÈTRES SYSTÈME</h4>
-        <button id="closeSettingsBtn" class="cyber-btn close-modal" aria-label="Fermer la fenêtre"><i class="fa-solid fa-xmark"></i></button>
+        <button id="closeSettingsBtn" class="cyber-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div class="modal-body">
@@ -143,16 +163,6 @@
           </select>
         </div>
 
-        <div id="bgColorGroup" class="form-group hidden">
-          <label for="bgColorInput">Couleur de Fond</label>
-          <input type="color" id="bgColorInput" value="#030509" class="color-input">
-        </div>
-
-        <div id="bgUrlGroup" class="form-group hidden">
-          <label for="bgUrlInput">Lien d'image (URL)</label>
-          <input type="text" id="bgUrlInput" placeholder="https://" class="cyber-input">
-        </div>
-
         <div class="form-group">
           <label>Arrondi des Cartes</label>
           <div class="radius-selector-grid">
@@ -162,11 +172,6 @@
           </div>
         </div>
 
-        <div class="form-group inline-setting">
-          <label for="scanlinesToggle">Filtre CRT Scanlines</label>
-          <input type="checkbox" id="scanlinesToggle" checked class="cyber-checkbox">
-        </div>
-
         <div class="form-actions">
           <button id="resetSettingsBtn" class="cyber-btn danger-btn">Réinitialiser</button>
         </div>
@@ -174,6 +179,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
